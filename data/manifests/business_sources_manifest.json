@@ -1,0 +1,14 @@
+{
+  "created_at": "2026-03-18T23:04:55.796462+00:00",
+  "downloads": [
+    {
+      "id": "packers_finance_2025",
+      "category": "finance",
+      "source_name": "Green Bay Packers official site",
+      "url": "https://www.packers.com/news/packers-finances-staying-in-good-shape-2025",
+      "local_path": "data/raw/business/finance/packers_finance_2025/packers_finances_staying_in_good_shape_2025.html",
+      "downloaded_at": "2026-03-18T23:04:57.038687+00:00",
+      "status_code": 200
+    }
+  ]
+}

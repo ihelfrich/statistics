@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  font-family: var(--sans);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(255, 212, 173, 0.92), transparent 26%),
+    radial-gradient(circle at top right, rgba(141, 183, 234, 0.52), transparent 28%),
+    linear-gradient(180deg, #f5efe2 0%, #f7f3ea 42%, #f0ecdf 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --sans: 'IBM Plex Sans', 'Avenir Next', sans-serif;
+  --display: 'Fraunces', 'Iowan Old Style', serif;
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+
+  --ink: #172347;
+  --ink-soft: #5f6782;
+  --accent: #e1562a;
+  --accent-deep: #b43f17;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    linear-gradient(transparent 31px, rgba(23, 35, 71, 0.045) 32px),
+    linear-gradient(90deg, transparent 31px, rgba(23, 35, 71, 0.045) 32px),
+    radial-gradient(circle at top left, rgba(255, 247, 231, 0.88), rgba(245, 239, 226, 0.92));
+  background-size: 32px 32px, 32px 32px, auto;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  color: var(--ink);
+}
+
+#root {
+  min-height: 100vh;
+  width: min(1480px, 100%);
+  margin: 0 auto;
+}
+
+code {
+  font-family: var(--mono);
+  background: rgba(20, 32, 64, 0.06);
+  border-radius: 0.55rem;
+  padding: 0.16rem 0.35rem;
+}

@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-03-18T23:17:53.197679+00:00",
+  "sqlite_path": "storage/nfl_analytics.sqlite",
+  "tables": [
+    {
+      "table": "dim_teams",
+      "path": "data/silver/nfl/dim_teams.csv.gz",
+      "rows": 36,
+      "columns": 19,
+      "generated_at": "2026-03-18T23:16:14.730328+00:00"
+    },
+    {
+      "table": "dim_players",
+      "path": "data/silver/nfl/dim_players.csv.gz",
+      "rows": 24375,
+      "columns": 32,
+      "generated_at": "2026-03-18T23:16:25.277849+00:00"
+    },
+    {
+      "table": "dim_games",
+      "path": "data/silver/nfl/dim_games.csv.gz",
+      "rows": 7276,
+      "columns": 33,
+      "generated_at": "2026-03-18T23:16:29.995873+00:00"
+    },
+    {
+      "table": "fact_rosters",
+      "path": "data/silver/nfl/fact_rosters.csv.gz",
+      "rows": 6353,
+      "columns": 34,
+      "generated_at": "2026-03-18T23:16:32.904114+00:00"
+    },
+    {
+      "table": "fact_rosters_weekly",
+      "path": "data/silver/nfl/fact_rosters_weekly.csv.gz",
+      "rows": 93428,
+      "columns": 34,
+      "generated_at": "2026-03-18T23:17:00.347385+00:00"
+    },
+    {
+      "table": "fact_player_weekly_stats",
+      "path": "data/silver/nfl/fact_player_weekly_stats.csv.gz",
+      "rows": 38402,
+      "columns": 119,
+      "generated_at": "2026-03-18T23:17:21.733268+00:00"
+    },
+    {
+      "table": "fact_player_season_stats",
+      "path": "data/silver/nfl/fact_player_season_stats.csv.gz",
+      "rows": 4027,
+      "columns": 116,
+      "generated_at": "2026-03-18T23:17:24.638586+00:00"
+    },
+    {
+      "table": "fact_team_weekly_stats",
+      "path": "data/silver/nfl/fact_team_weekly_stats.csv.gz",
+      "rows": 1140,
+      "columns": 106,
+      "generated_at": "2026-03-18T23:17:25.952541+00:00"
+    },
+    {
+      "table": "fact_team_season_stats",
+      "path": "data/silver/nfl/fact_team_season_stats.csv.gz",
+      "rows": 64,
+      "columns": 103,
+      "generated_at": "2026-03-18T23:17:26.023989+00:00"
+    },
+    {
+      "table": "fact_snap_counts",
+      "path": "data/silver/nfl/fact_snap_counts.csv.gz",
+      "rows": 53227,
+      "columns": 20,
+      "generated_at": "2026-03-18T23:17:35.525958+00:00"
+    },
+    {
+      "table": "fact_draft_picks",
+      "path": "data/silver/nfl/fact_draft_picks.csv.gz",
+      "rows": 12670,
+      "columns": 38,
+      "generated_at": "2026-03-18T23:17:40.092062+00:00"
+    },
+    {
+      "table": "fact_contracts",
+      "path": "data/silver/nfl/fact_contracts.csv.gz",
+      "rows": 31893,
+      "columns": 26,
+      "generated_at": "2026-03-18T23:17:47.077885+00:00"
+    },
+    {
+      "table": "fact_trades",
+      "path": "data/silver/nfl/fact_trades.csv.gz",
+      "rows": 4847,
+      "columns": 12,
+      "generated_at": "2026-03-18T23:17:47.764477+00:00"
+    },
+    {
+      "table": "fact_team_financials",
+      "path": "data/silver/nfl/fact_team_financials.csv.gz",
+      "rows": 1,
+      "columns": 18,
+      "generated_at": "2026-03-18T23:17:47.777044+00:00"
+    },
+    {
+      "table": "team_game_results",
+      "path": "data/gold/nfl/team_game_results.csv.gz",
+      "rows": 14552,
+      "columns": 24,
+      "generated_at": "2026-03-18T23:17:50.101827+00:00"
+    },
+    {
+      "table": "team_season_summary",
+      "path": "data/gold/nfl/team_season_summary.csv.gz",
+      "rows": 64,
+      "columns": 110,
+      "generated_at": "2026-03-18T23:17:50.171791+00:00"
+    },
+    {
+      "table": "player_season_summary",
+      "path": "data/gold/nfl/player_season_summary.csv.gz",
+      "rows": 4027,
+      "columns": 121,
+      "generated_at": "2026-03-18T23:17:53.197638+00:00"
+    }
+  ]
+}

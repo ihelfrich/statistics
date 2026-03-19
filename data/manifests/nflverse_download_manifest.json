@@ -1,0 +1,335 @@
+{
+  "created_at": "2026-03-18T23:06:25.723712+00:00",
+  "seasons": [
+    2024,
+    2025
+  ],
+  "skip_pbp": false,
+  "downloads": [
+    {
+      "tag": "teams",
+      "asset_name": "teams_colors_logos.csv.gz",
+      "local_path": "data/raw/nflverse/teams/teams_colors_logos.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/teams/teams_colors_logos.csv.gz",
+      "size_bytes": 2600,
+      "updated_at": "2025-10-01T08:03:17Z",
+      "downloaded_at": "2026-03-18T23:06:17.635247+00:00"
+    },
+    {
+      "tag": "teams",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/teams/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/teams/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2025-10-01T08:03:18Z",
+      "downloaded_at": "2026-03-18T23:06:17.635438+00:00"
+    },
+    {
+      "tag": "schedules",
+      "asset_name": "games.csv.gz",
+      "local_path": "data/raw/nflverse/schedules/games.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/schedules/games.csv.gz",
+      "size_bytes": 502095,
+      "updated_at": "2026-02-09T11:46:45Z",
+      "downloaded_at": "2026-03-18T23:06:17.635777+00:00"
+    },
+    {
+      "tag": "schedules",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/schedules/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/schedules/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-09T11:46:46Z",
+      "downloaded_at": "2026-03-18T23:06:17.635922+00:00"
+    },
+    {
+      "tag": "players",
+      "asset_name": "players.csv.gz",
+      "local_path": "data/raw/nflverse/players/players.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/players/players.csv.gz",
+      "size_bytes": 2442214,
+      "updated_at": "2026-03-18T08:45:33Z",
+      "downloaded_at": "2026-03-18T23:06:17.636061+00:00"
+    },
+    {
+      "tag": "players",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/players/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/players/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-03-18T08:45:34Z",
+      "downloaded_at": "2026-03-18T23:06:17.636481+00:00"
+    },
+    {
+      "tag": "officials",
+      "asset_name": "officials.csv.gz",
+      "local_path": "data/raw/nflverse/officials/officials.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/officials/officials.csv.gz",
+      "size_bytes": 107634,
+      "updated_at": "2026-02-05T07:41:35Z",
+      "downloaded_at": "2026-03-18T23:06:17.636632+00:00"
+    },
+    {
+      "tag": "officials",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/officials/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/officials/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-05T07:41:36Z",
+      "downloaded_at": "2026-03-18T23:06:17.636768+00:00"
+    },
+    {
+      "tag": "trades",
+      "asset_name": "trades.csv.gz",
+      "local_path": "data/raw/nflverse/trades/trades.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/trades/trades.csv.gz",
+      "size_bytes": 73160,
+      "updated_at": "2025-10-01T18:25:29Z",
+      "downloaded_at": "2026-03-18T23:06:17.636917+00:00"
+    },
+    {
+      "tag": "trades",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/trades/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/trades/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2025-10-01T18:25:29Z",
+      "downloaded_at": "2026-03-18T23:06:17.637054+00:00"
+    },
+    {
+      "tag": "draft_picks",
+      "asset_name": "draft_picks.csv.gz",
+      "local_path": "data/raw/nflverse/draft_picks/draft_picks.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/draft_picks/draft_picks.csv.gz",
+      "size_bytes": 501432,
+      "updated_at": "2026-02-25T06:35:54Z",
+      "downloaded_at": "2026-03-18T23:06:17.637206+00:00"
+    },
+    {
+      "tag": "draft_picks",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/draft_picks/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/draft_picks/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-25T06:35:54Z",
+      "downloaded_at": "2026-03-18T23:06:17.637345+00:00"
+    },
+    {
+      "tag": "contracts",
+      "asset_name": "historical_contracts.csv.gz",
+      "local_path": "data/raw/nflverse/contracts/historical_contracts.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/contracts/historical_contracts.csv.gz",
+      "size_bytes": 1186370,
+      "updated_at": "2022-05-29T07:12:13Z",
+      "downloaded_at": "2026-03-18T23:06:17.637491+00:00"
+    },
+    {
+      "tag": "contracts",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/contracts/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/contracts/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-03-18T07:59:03Z",
+      "downloaded_at": "2026-03-18T23:06:17.637621+00:00"
+    },
+    {
+      "tag": "pbp",
+      "asset_name": "play_by_play_2024.csv.gz",
+      "local_path": "data/raw/nflverse/pbp/play_by_play_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2024.csv.gz",
+      "size_bytes": 19358612,
+      "updated_at": "2025-09-03T09:25:07Z",
+      "downloaded_at": "2026-03-18T23:06:17.637842+00:00"
+    },
+    {
+      "tag": "pbp",
+      "asset_name": "play_by_play_2025.csv.gz",
+      "local_path": "data/raw/nflverse/pbp/play_by_play_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2025.csv.gz",
+      "size_bytes": 19109143,
+      "updated_at": "2026-02-12T09:58:23Z",
+      "downloaded_at": "2026-03-18T23:06:17.638014+00:00"
+    },
+    {
+      "tag": "pbp",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/pbp/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/pbp/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-12T10:25:25Z",
+      "downloaded_at": "2026-03-18T23:06:18.893732+00:00"
+    },
+    {
+      "tag": "rosters",
+      "asset_name": "roster_2024.csv.gz",
+      "local_path": "data/raw/nflverse/rosters/roster_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2024.csv.gz",
+      "size_bytes": 384633,
+      "updated_at": "2025-03-14T07:16:10Z",
+      "downloaded_at": "2026-03-18T23:06:18.941251+00:00"
+    },
+    {
+      "tag": "rosters",
+      "asset_name": "roster_2025.csv.gz",
+      "local_path": "data/raw/nflverse/rosters/roster_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2025.csv.gz",
+      "size_bytes": 391832,
+      "updated_at": "2026-03-14T07:33:08Z",
+      "downloaded_at": "2026-03-18T23:06:18.941416+00:00"
+    },
+    {
+      "tag": "rosters",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/rosters/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/rosters/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-03-18T07:46:24Z",
+      "downloaded_at": "2026-03-18T23:06:21.281822+00:00"
+    },
+    {
+      "tag": "weekly_rosters",
+      "asset_name": "roster_weekly_2024.csv.gz",
+      "local_path": "data/raw/nflverse/weekly_rosters/roster_weekly_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/weekly_rosters/roster_weekly_2024.csv.gz",
+      "size_bytes": 699786,
+      "updated_at": "2025-03-14T07:16:06Z",
+      "downloaded_at": "2026-03-18T23:06:21.290065+00:00"
+    },
+    {
+      "tag": "weekly_rosters",
+      "asset_name": "roster_weekly_2025.csv.gz",
+      "local_path": "data/raw/nflverse/weekly_rosters/roster_weekly_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/weekly_rosters/roster_weekly_2025.csv.gz",
+      "size_bytes": 708144,
+      "updated_at": "2026-03-14T07:33:06Z",
+      "downloaded_at": "2026-03-18T23:06:21.290205+00:00"
+    },
+    {
+      "tag": "weekly_rosters",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/weekly_rosters/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/weekly_rosters/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-03-14T07:33:06Z",
+      "downloaded_at": "2026-03-18T23:06:22.704230+00:00"
+    },
+    {
+      "tag": "stats_player",
+      "asset_name": "stats_player_week_2024.csv.gz",
+      "local_path": "data/raw/nflverse/stats_player/stats_player_week_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2024.csv.gz",
+      "size_bytes": 1174210,
+      "updated_at": "2025-09-26T12:15:24Z",
+      "downloaded_at": "2026-03-18T23:06:22.713909+00:00"
+    },
+    {
+      "tag": "stats_player",
+      "asset_name": "stats_player_regpost_2024.csv.gz",
+      "local_path": "data/raw/nflverse/stats_player/stats_player_regpost_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_regpost_2024.csv.gz",
+      "size_bytes": 154374,
+      "updated_at": "2025-09-26T12:15:45Z",
+      "downloaded_at": "2026-03-18T23:06:22.714166+00:00"
+    },
+    {
+      "tag": "stats_player",
+      "asset_name": "stats_player_week_2025.csv.gz",
+      "local_path": "data/raw/nflverse/stats_player/stats_player_week_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_2025.csv.gz",
+      "size_bytes": 1217353,
+      "updated_at": "2026-02-12T10:00:51Z",
+      "downloaded_at": "2026-03-18T23:06:22.714342+00:00"
+    },
+    {
+      "tag": "stats_player",
+      "asset_name": "stats_player_regpost_2025.csv.gz",
+      "local_path": "data/raw/nflverse/stats_player/stats_player_regpost_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_regpost_2025.csv.gz",
+      "size_bytes": 155551,
+      "updated_at": "2026-02-12T10:01:21Z",
+      "downloaded_at": "2026-03-18T23:06:22.714535+00:00"
+    },
+    {
+      "tag": "stats_player",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/stats_player/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_player/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-12T10:28:18Z",
+      "downloaded_at": "2026-03-18T23:06:23.798924+00:00"
+    },
+    {
+      "tag": "stats_team",
+      "asset_name": "stats_team_week_2024.csv.gz",
+      "local_path": "data/raw/nflverse/stats_team/stats_team_week_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_week_2024.csv.gz",
+      "size_bytes": 61591,
+      "updated_at": "2025-09-26T12:15:27Z",
+      "downloaded_at": "2026-03-18T23:06:23.808257+00:00"
+    },
+    {
+      "tag": "stats_team",
+      "asset_name": "stats_team_regpost_2024.csv.gz",
+      "local_path": "data/raw/nflverse/stats_team/stats_team_regpost_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_regpost_2024.csv.gz",
+      "size_bytes": 7454,
+      "updated_at": "2025-09-26T12:15:59Z",
+      "downloaded_at": "2026-03-18T23:06:23.808415+00:00"
+    },
+    {
+      "tag": "stats_team",
+      "asset_name": "stats_team_week_2025.csv.gz",
+      "local_path": "data/raw/nflverse/stats_team/stats_team_week_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_week_2025.csv.gz",
+      "size_bytes": 63904,
+      "updated_at": "2026-02-12T10:00:54Z",
+      "downloaded_at": "2026-03-18T23:06:23.808553+00:00"
+    },
+    {
+      "tag": "stats_team",
+      "asset_name": "stats_team_regpost_2025.csv.gz",
+      "local_path": "data/raw/nflverse/stats_team/stats_team_regpost_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_regpost_2025.csv.gz",
+      "size_bytes": 7424,
+      "updated_at": "2026-02-12T10:01:42Z",
+      "downloaded_at": "2026-03-18T23:06:23.808690+00:00"
+    },
+    {
+      "tag": "stats_team",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/stats_team/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/stats_team/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-12T10:28:39Z",
+      "downloaded_at": "2026-03-18T23:06:24.897916+00:00"
+    },
+    {
+      "tag": "snap_counts",
+      "asset_name": "snap_counts_2024.csv.gz",
+      "local_path": "data/raw/nflverse/snap_counts/snap_counts_2024.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/snap_counts/snap_counts_2024.csv.gz",
+      "size_bytes": 502822,
+      "updated_at": "2025-10-06T06:51:20Z",
+      "downloaded_at": "2026-03-18T23:06:24.905457+00:00"
+    },
+    {
+      "tag": "snap_counts",
+      "asset_name": "snap_counts_2025.csv.gz",
+      "local_path": "data/raw/nflverse/snap_counts/snap_counts_2025.csv.gz",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/snap_counts/snap_counts_2025.csv.gz",
+      "size_bytes": 504034,
+      "updated_at": "2026-02-09T13:39:50Z",
+      "downloaded_at": "2026-03-18T23:06:24.905648+00:00"
+    },
+    {
+      "tag": "snap_counts",
+      "asset_name": "timestamp.json",
+      "local_path": "data/raw/nflverse/snap_counts/timestamp.json",
+      "source_url": "https://github.com/nflverse/nflverse-data/releases/download/snap_counts/timestamp.json",
+      "size_bytes": 43,
+      "updated_at": "2026-02-09T13:39:51Z",
+      "downloaded_at": "2026-03-18T23:06:25.715761+00:00"
+    }
+  ],
+  "failures": []
+}
