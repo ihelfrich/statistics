@@ -171,3 +171,150 @@ export function linearRegression(xs: number[], ys: number[]) {
   const rSquared = ssTot === 0 ? 0 : 1 - ssRes / ssTot
   return { slope, intercept, rSquared, predicted, residuals }
 }
+
+function solveLinearSystem(matrix: number[][], vector: number[]) {
+  const n = matrix.length
+  if (n === 0 || vector.length !== n) {
+    return [] as number[]
+  }
+
+  const augmented = matrix.map((row, rowIndex) => [...row, vector[rowIndex]])
+
+  for (let pivotIndex = 0; pivotIndex < n; pivotIndex += 1) {
+    let maxRow = pivotIndex
+    for (let rowIndex = pivotIndex + 1; rowIndex < n; rowIndex += 1) {
+      if (Math.abs(augmented[rowIndex][pivotIndex]) > Math.abs(augmented[maxRow][pivotIndex])) {
+        maxRow = rowIndex
+      }
+    }
+
+    if (Math.abs(augmented[maxRow][pivotIndex]) < 1e-12) {
+      return Array.from({ length: n }, () => 0)
+    }
+
+    if (maxRow !== pivotIndex) {
+      const temp = augmented[pivotIndex]
+      augmented[pivotIndex] = augmented[maxRow]
+      augmented[maxRow] = temp
+    }
+
+    const pivot = augmented[pivotIndex][pivotIndex]
+    for (let colIndex = pivotIndex; colIndex <= n; colIndex += 1) {
+      augmented[pivotIndex][colIndex] /= pivot
+    }
+
+    for (let rowIndex = 0; rowIndex < n; rowIndex += 1) {
+      if (rowIndex === pivotIndex) {
+        continue
+      }
+      const factor = augmented[rowIndex][pivotIndex]
+      for (let colIndex = pivotIndex; colIndex <= n; colIndex += 1) {
+        augmented[rowIndex][colIndex] -= factor * augmented[pivotIndex][colIndex]
+      }
+    }
+  }
+
+  return augmented.map((row) => row[n])
+}
+
+function invertMatrix(matrix: number[][]) {
+  const n = matrix.length
+  if (n === 0) {
+    return [] as number[][]
+  }
+
+  const augmented = matrix.map((row, rowIndex) => [
+    ...row,
+    ...Array.from({ length: n }, (_, colIndex) => (rowIndex === colIndex ? 1 : 0)),
+  ])
+
+  for (let pivotIndex = 0; pivotIndex < n; pivotIndex += 1) {
+    let maxRow = pivotIndex
+    for (let rowIndex = pivotIndex + 1; rowIndex < n; rowIndex += 1) {
+      if (Math.abs(augmented[rowIndex][pivotIndex]) > Math.abs(augmented[maxRow][pivotIndex])) {
+        maxRow = rowIndex
+      }
+    }
+
+    if (Math.abs(augmented[maxRow][pivotIndex]) < 1e-12) {
+      return Array.from({ length: n }, () => Array.from({ length: n }, () => 0))
+    }
+
+    if (maxRow !== pivotIndex) {
+      const temp = augmented[pivotIndex]
+      augmented[pivotIndex] = augmented[maxRow]
+      augmented[maxRow] = temp
+    }
+
+    const pivot = augmented[pivotIndex][pivotIndex]
+    for (let colIndex = 0; colIndex < 2 * n; colIndex += 1) {
+      augmented[pivotIndex][colIndex] /= pivot
+    }
+
+    for (let rowIndex = 0; rowIndex < n; rowIndex += 1) {
+      if (rowIndex === pivotIndex) {
+        continue
+      }
+      const factor = augmented[rowIndex][pivotIndex]
+      for (let colIndex = 0; colIndex < 2 * n; colIndex += 1) {
+        augmented[rowIndex][colIndex] -= factor * augmented[pivotIndex][colIndex]
+      }
+    }
+  }
+
+  return augmented.map((row) => row.slice(n))
+}
+
+export function multipleRegression(predictors: number[][], ys: number[]) {
+  const n = Math.min(predictors.length, ys.length)
+  if (n === 0) {
+    return {
+      coefficients: [] as number[],
+      standardErrors: [] as number[],
+      predicted: [] as number[],
+      residuals: [] as number[],
+      rSquared: 0,
+    }
+  }
+
+  const featureCount = predictors[0]?.length ?? 0
+  const design = predictors.slice(0, n).map((row) => [1, ...row.slice(0, featureCount)])
+  const y = ys.slice(0, n)
+  const parameterCount = featureCount + 1
+
+  const xtx = Array.from({ length: parameterCount }, () => Array.from({ length: parameterCount }, () => 0))
+  const xty = Array.from({ length: parameterCount }, () => 0)
+
+  for (let rowIndex = 0; rowIndex < n; rowIndex += 1) {
+    const row = design[rowIndex]
+    for (let left = 0; left < parameterCount; left += 1) {
+      xty[left] += row[left] * y[rowIndex]
+      for (let right = 0; right < parameterCount; right += 1) {
+        xtx[left][right] += row[left] * row[right]
+      }
+    }
+  }
+
+  const coefficients = solveLinearSystem(xtx, xty)
+  const predicted = design.map((row) =>
+    row.reduce((sum, value, index) => sum + value * (coefficients[index] ?? 0), 0),
+  )
+  const residuals = y.map((value, index) => value - predicted[index])
+  const yMean = mean(y)
+  const ssRes = residuals.reduce((sum, value) => sum + value * value, 0)
+  const ssTot = y.reduce((sum, value) => sum + (value - yMean) ** 2, 0)
+  const rSquared = ssTot === 0 ? 0 : 1 - ssRes / ssTot
+
+  const dof = Math.max(1, n - parameterCount)
+  const sigmaSquared = ssRes / dof
+  const inverse = invertMatrix(xtx)
+  const standardErrors = inverse.map((row, index) => Math.sqrt(Math.max(row[index], 0) * sigmaSquared))
+
+  return {
+    coefficients,
+    standardErrors,
+    predicted,
+    residuals,
+    rSquared,
+  }
+}

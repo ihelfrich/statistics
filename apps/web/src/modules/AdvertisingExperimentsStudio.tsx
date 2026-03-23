@@ -4,11 +4,13 @@ import {
   buildPolyline,
   formatNumber,
   formatPct,
+  mean,
   normalCdf,
   normalPdf,
+  stdDev,
 } from '../utils/math.ts'
 
-type ScenarioKey = 'creativeCtr' | 'landingPageCvr' | 'revenuePerSession'
+type ScenarioKey = 'conversionLift' | 'brandLiftSurvey' | 'geoLift' | 'valuePerSession'
 
 type ProportionScenario = {
   kind: 'proportion'
@@ -24,6 +26,7 @@ type ProportionScenario = {
   rolloutVolume: number
   rolloutLabel: string
   skills: string[]
+  outputs: string[]
   questions: Array<{ prompt: string; answer: string }>
 }
 
@@ -43,10 +46,30 @@ type MeanScenario = {
   rolloutVolume: number
   rolloutLabel: string
   skills: string[]
+  outputs: string[]
   questions: Array<{ prompt: string; answer: string }>
 }
 
-type ExperimentScenario = ProportionScenario | MeanScenario
+type GeoScenario = {
+  kind: 'geo'
+  label: string
+  title: string
+  description: string
+  controlLabel: string
+  variantLabel: string
+  preControl: number[]
+  postControl: number[]
+  preTreatment: number[]
+  postTreatment: number[]
+  unit: 'count' | 'currency' | 'pct'
+  rolloutMultiplier: number
+  rolloutLabel: string
+  skills: string[]
+  outputs: string[]
+  questions: Array<{ prompt: string; answer: string }>
+}
+
+type ExperimentScenario = ProportionScenario | MeanScenario | GeoScenario
 
 const confidenceLookup: Record<number, number> = {
   0.9: 1.645,
@@ -56,82 +79,130 @@ const confidenceLookup: Record<number, number> = {
 
 const alphaOptions = [0.1, 0.05, 0.01]
 const confidenceOptions = [0.9, 0.95, 0.99]
-
-const scenarioOrder: ScenarioKey[] = ['creativeCtr', 'landingPageCvr', 'revenuePerSession']
+const scenarioOrder: ScenarioKey[] = ['conversionLift', 'brandLiftSurvey', 'geoLift', 'valuePerSession']
 
 const experimentScenarios: Record<ScenarioKey, ExperimentScenario> = {
-  creativeCtr: {
+  conversionLift: {
     kind: 'proportion',
-    label: 'Creative CTR',
-    title: 'Creative A/B test on click-through rate',
+    label: 'Conversion Lift',
+    title: 'User-level conversion lift on qualified lead generation',
     description:
-      'A paid social team is deciding whether a new opening hook should replace the current creative in a prospecting campaign with millions of impressions at stake.',
-    controlLabel: 'Current cut',
-    variantLabel: 'New hook',
-    nA: 240000,
-    nB: 238000,
-    rateA: 0.0114,
-    rateB: 0.0127,
-    rolloutVolume: 2400000,
-    rolloutLabel: 'incremental monthly clicks if rolled out',
-    skills: ['difference in proportions', 'p-values', 'confidence intervals', 'lift vs significance', 'power'],
+      'A growth team is running a holdout-based lift test to estimate incremental qualified lead rate, not just attributed platform conversions, before adding a large monthly budget tranche.',
+    controlLabel: 'Holdout',
+    variantLabel: 'Exposed',
+    nA: 420000,
+    nB: 423000,
+    rateA: 0.0189,
+    rateB: 0.0216,
+    rolloutVolume: 5200000,
+    rolloutLabel: 'incremental qualified leads at the planned monthly audience scale',
+    skills: ['difference in proportions', 'incrementality', 'confidence intervals', 'p-values', 'lift translation'],
+    outputs: [
+      'Estimate incremental conversion rate, not just platform-reported attributed conversions.',
+      'Translate lift into incremental leads the business can forecast against pipeline targets.',
+      'Communicate uncertainty so rollout decisions are based on ranges, not just headline point estimates.',
+    ],
     questions: [
       {
-        prompt: 'What does a p-value of 0.03 mean here?',
+        prompt: 'Why is this a lift study and not just a reporting exercise on attributed conversions?',
         answer:
-          'It means that if the two creatives truly had the same CTR, a difference this large or larger would occur only about 3% of the time from random assignment noise alone. It is not the probability that the variant is “true.”',
+          'Because the question is causal: what happened because ads ran? Attributed conversions can move with exposure while still overstating the true incremental contribution of the media.',
       },
       {
-        prompt: 'Why should the team still care about effect size even when the p-value is small?',
+        prompt: 'Why can a statistically significant lift still be strategically weak?',
         answer:
-          'Because statistical significance answers whether the data are hard to explain under the null, not whether the lift is large enough to matter financially or operationally.',
+          'Because significance only says the observed effect is hard to explain by random assignment noise. The incremental rate can still be too small to justify the budget or opportunity cost.',
       },
       {
-        prompt: 'If the confidence interval excludes zero but is narrow, what operational advantage does that give the marketer?',
+        prompt: 'What is the correct business use of the confidence interval here?',
         answer:
-          'It means the team has both directional confidence and a tighter estimate of the likely lift range, which makes forecasting and rollout planning more defensible.',
+          'Use it to bound plausible incremental lead outcomes under scale. The lower bound matters for risk management, not just the point estimate in the middle.',
       },
     ],
   },
-  landingPageCvr: {
+  brandLiftSurvey: {
     kind: 'proportion',
-    label: 'Landing CVR',
-    title: 'Post-click landing page test on conversion rate',
+    label: 'Brand Lift Survey',
+    title: 'Survey-measured ad recall lift',
     description:
-      'A performance marketer is testing a shorter product page and wants to know whether the higher conversion rate is real enough to deploy before a high-spend promotion.',
-    controlLabel: 'Current page',
-    variantLabel: 'Short-form page',
-    nA: 18400,
-    nB: 18320,
-    rateA: 0.036,
-    rateB: 0.0419,
-    rolloutVolume: 92000,
-    rolloutLabel: 'incremental monthly orders if rolled out',
-    skills: ['difference in proportions', 'confidence intervals', 'practical significance', 'power', 'sampling variability'],
+      'A brand team is reading exposed-versus-control survey results to determine whether a streaming and social video campaign produced a real recall lift, and whether the range is decision-worthy.',
+    controlLabel: 'Control survey',
+    variantLabel: 'Exposed survey',
+    nA: 9400,
+    nB: 9630,
+    rateA: 0.147,
+    rateB: 0.183,
+    rolloutVolume: 1800000,
+    rolloutLabel: 'incremental ad-recall-positive people in the target audience',
+    skills: ['survey proportions', 'confidence intervals', 'lift interpretation', 'precision vs scale', 'brand measurement'],
+    outputs: [
+      'Estimate whether upper-funnel media moved a survey-based brand outcome.',
+      'Translate percentage-point lift into an audience-level planning implication.',
+      'Describe what a survey result can support without pretending it proves downstream sales impact.',
+    ],
     questions: [
       {
-        prompt: 'Why is this a proportions problem rather than a means problem?',
+        prompt: 'Why is a brand lift survey still a proportions problem?',
         answer:
-          'Because the core outcome is binary at the session level: each visit either converts or does not convert. The natural statistic is a conversion proportion, not a continuous mean.',
+          'Because each respondent either gives the target answer or does not. The main statistic is the difference between two response proportions, not a continuous mean.',
       },
       {
-        prompt: 'If the test is significant but the lower CI bound is very close to zero, how should the marketer describe the result?',
+        prompt: 'Why should a planner avoid describing this as direct proof of sales lift?',
         answer:
-          'They should say the page is likely better, but the worst plausible lift is still modest. The evidence supports rollout, but expectations should remain disciplined.',
+          'Because the measured outcome is ad recall, not purchases. It is valid evidence on the survey outcome itself, but it is only one link in the full causal chain to business impact.',
       },
       {
-        prompt: 'How does increasing traffic affect the interval width if the observed rates stay the same?',
+        prompt: 'What does a narrow positive interval buy the team operationally?',
         answer:
-          'More traffic reduces the standard error, so the confidence interval narrows and the p-value typically falls. Precision improves even if the estimated lift does not change.',
+          'It makes it easier to defend future budget, because the team is no longer relying on a vague directional win. The likely effect size range is tighter and easier to plan around.',
       },
     ],
   },
-  revenuePerSession: {
+  geoLift: {
+    kind: 'geo',
+    label: 'Geo Lift',
+    title: 'Matched-geo conversion lift for video prospecting',
+    description:
+      'A measurement team is reading a geography-based lift study for a video-heavy prospecting plan where user-level holdouts were not the right operational fit. The effect is the post-pre treated change minus the post-pre control change.',
+    controlLabel: 'Matched control geos',
+    variantLabel: 'Treated geos',
+    preControl: [242, 251, 260, 247, 255, 246, 258, 249, 263, 252, 257, 245],
+    postControl: [246, 256, 264, 251, 259, 250, 263, 254, 268, 256, 262, 249],
+    preTreatment: [244, 248, 261, 249, 257, 247, 259, 251, 265, 254, 255, 246],
+    postTreatment: [259, 265, 278, 267, 273, 262, 276, 268, 282, 270, 271, 262],
+    unit: 'count',
+    rolloutMultiplier: 210,
+    rolloutLabel: 'incremental weekly qualified signups if the treatment scaled nationally',
+    skills: ['difference-in-differences', 'matched-market variance', 'confidence intervals', 'incrementality', 'test-read interpretation'],
+    outputs: [
+      'Estimate causal lift when the experiment randomizes by geography instead of user.',
+      'Check whether the treated post-period moved more than the matched controls would predict.',
+      'Translate per-geo lift into a national planning estimate without ignoring uncertainty.',
+    ],
+    questions: [
+      {
+        prompt: 'Why is the treated-minus-control post gap alone not enough in a geo test?',
+        answer:
+          'Because geos can differ before the test starts. The correct effect compares changes, not just levels, so the analysis adjusts for what the treated geos were already doing relative to controls.',
+      },
+      {
+        prompt: 'What does a noisy distribution of geo-level changes do to the lift estimate?',
+        answer:
+          'It widens the standard error and the confidence interval. Even a useful average effect can become hard to detect if the matched-market changes are volatile.',
+      },
+      {
+        prompt: 'Why is a geo lift result often more operationally credible than raw attributed conversions?',
+        answer:
+          'Because the treated versus control design is trying to identify what changed because media ran, not simply what conversions happened after exposure and were easy to assign to the platform.',
+      },
+    ],
+  },
+  valuePerSession: {
     kind: 'mean',
-    label: 'Revenue / Session',
-    title: 'Average revenue per session test',
+    label: 'Value / Session',
+    title: 'Average revenue per session experiment',
     description:
-      'An ecommerce team changed the product page layout and is testing whether average revenue per session increases enough to justify a permanent rollout.',
+      'A merchandising and paid media team changed the landing experience and is testing whether value per session improved enough to justify permanent rollout before a major promotion.',
     controlLabel: 'Current experience',
     variantLabel: 'Merch-first layout',
     nA: 12400,
@@ -141,41 +212,73 @@ const experimentScenarios: Record<ScenarioKey, ExperimentScenario> = {
     sdA: 15.1,
     sdB: 15.8,
     rolloutVolume: 310000,
-    rolloutLabel: 'incremental monthly revenue if rolled out',
-    skills: ['difference in means', 'high variance metrics', 'confidence intervals', 'p-values', 'business impact'],
+    rolloutLabel: 'incremental monthly revenue at current session volume',
+    skills: ['difference in means', 'high-variance metrics', 'confidence intervals', 'effect size', 'business value under uncertainty'],
+    outputs: [
+      'Estimate whether the experience increased a noisy value metric enough to matter.',
+      'Show how variance drives sample size needs even when the mean lift looks attractive.',
+      'Separate a positive point estimate from a claim of a fully confirmed win.',
+    ],
     questions: [
       {
-        prompt: 'Why can a mean-based test require a lot of traffic even when the lift looks useful in dollars?',
+        prompt: 'Why can revenue per session need much more traffic than conversion rate?',
         answer:
-          'Revenue per session is noisy and often right-skewed. Large variance inflates the standard error, so the test needs more observations to distinguish a real lift from noise.',
+          'Because session value is usually much noisier and more skewed. High variance inflates the standard error, so the test needs more observations to narrow the interval around the mean lift.',
       },
       {
-        prompt: 'If the average lift is positive but the CI still includes zero, what is the correct interpretation?',
+        prompt: 'What is the correct reading if the mean lift is positive but the interval still touches zero?',
         answer:
-          'The observed data lean positive, but the evidence is still compatible with no true effect. The team should avoid claiming a confirmed win until uncertainty narrows.',
+          'The current estimate leans positive, but the data are still compatible with no real lift. The team should not talk as if the outcome is fully settled.',
       },
       {
-        prompt: 'Why should the advertiser separate “average revenue per session” from “conversion rate” in interpretation?',
+        prompt: 'Why is this still relevant to advertising teams and not just site UX teams?',
         answer:
-          'Because a revenue lift can come from higher order values, a different product mix, or a different conversion rate. The mean summarizes outcome value, but it does not reveal the mechanism.',
+          'Because media efficiency depends on post-click value. Advertising decisions are downstream of what the landing experience does to value per visit.',
       },
     ],
   },
 }
 
 function formatPrimaryMetric(scenario: ExperimentScenario, value: number) {
-  return scenario.kind === 'proportion' ? formatPct(value) : `$${value.toFixed(2)}`
+  if (scenario.kind === 'proportion') {
+    return formatPct(value)
+  }
+  if (scenario.kind === 'mean') {
+    return `$${value.toFixed(2)}`
+  }
+  if (scenario.unit === 'currency') {
+    return `$${value.toFixed(2)}`
+  }
+  if (scenario.unit === 'pct') {
+    return formatPct(value)
+  }
+  return `${value.toFixed(1)}`
 }
 
 function formatEffect(scenario: ExperimentScenario, value: number) {
-  return scenario.kind === 'proportion' ? `${(value * 100).toFixed(2)} pp` : `$${value.toFixed(2)}`
+  if (scenario.kind === 'proportion') {
+    return `${(value * 100).toFixed(2)} pp`
+  }
+  if (scenario.kind === 'mean') {
+    return `$${value.toFixed(2)}`
+  }
+  if (scenario.unit === 'currency') {
+    return `$${value.toFixed(2)}`
+  }
+  if (scenario.unit === 'pct') {
+    return `${(value * 100).toFixed(2)} pp`
+  }
+  return `${value.toFixed(1)}`
 }
 
 function formatIncremental(scenario: ExperimentScenario, value: number) {
-  if (scenario.kind === 'proportion') {
-    return `${Math.round(value).toLocaleString('en-US')}`
+  if (scenario.kind === 'mean') {
+    return `$${Math.round(value).toLocaleString('en-US')}`
   }
-  return `$${Math.round(value).toLocaleString('en-US')}`
+  if (scenario.kind === 'geo' && scenario.unit === 'currency') {
+    return `$${Math.round(value).toLocaleString('en-US')}`
+  }
+  return `${Math.round(value).toLocaleString('en-US')}`
 }
 
 function formatPValue(value: number) {
@@ -183,30 +286,38 @@ function formatPValue(value: number) {
 }
 
 export function AdvertisingExperimentsStudio() {
-  const [scenario, setScenario] = useState<ScenarioKey>('creativeCtr')
-  const [sampleScale, setSampleScale] = useState(100)
+  const [scenario, setScenario] = useState<ScenarioKey>('conversionLift')
+  const [evidenceScale, setEvidenceScale] = useState(100)
   const [alpha, setAlpha] = useState(0.05)
   const [confidenceLevel, setConfidenceLevel] = useState(0.95)
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0)
 
   const activeScenario = experimentScenarios[scenario]
-  const scale = sampleScale / 100
-  const zCritical = confidenceLookup[confidenceLevel]
   const questions = activeScenario.questions
   const activeQuestion = questions[activeQuestionIndex % questions.length]
+  const zCritical = confidenceLookup[confidenceLevel]
 
   let metricA = 0
   let metricB = 0
-  let nA = 0
-  let nB = 0
   let diff = 0
   let standardError = 0
   let testStandardError = 0
+  let relativeLift = 0
+  let incrementalImpact = 0
   let hypothesisText = ''
+  let chartDomainMax = 1
+  let sliderDisplay = ''
+  let sliderNote = ''
+  let pairCount = 0
+  let geoPreControl = 0
+  let geoPostControl = 0
+  let geoPreTreatment = 0
+  let geoPostTreatment = 0
 
   if (activeScenario.kind === 'proportion') {
-    nA = Math.max(1000, Math.round(activeScenario.nA * scale))
-    nB = Math.max(1000, Math.round(activeScenario.nB * scale))
+    const scale = evidenceScale / 100
+    const nA = Math.max(1500, Math.round(activeScenario.nA * scale))
+    const nB = Math.max(1500, Math.round(activeScenario.nB * scale))
     const successesA = Math.round(nA * activeScenario.rateA)
     const successesB = Math.round(nB * activeScenario.rateB)
     metricA = successesA / nA
@@ -215,36 +326,71 @@ export function AdvertisingExperimentsStudio() {
     const pooledRate = (successesA + successesB) / (nA + nB)
     standardError = Math.sqrt((metricA * (1 - metricA)) / nA + (metricB * (1 - metricB)) / nB)
     testStandardError = Math.sqrt(pooledRate * (1 - pooledRate) * ((1 / nA) + (1 / nB)))
+    relativeLift = metricA === 0 ? 0 : diff / metricA
+    incrementalImpact = diff * activeScenario.rolloutVolume
     hypothesisText = `H₀: p${activeScenario.variantLabel} = p${activeScenario.controlLabel} vs. H₁: p${activeScenario.variantLabel} ≠ p${activeScenario.controlLabel}`
-  } else {
-    nA = Math.max(250, Math.round(activeScenario.nA * scale))
-    nB = Math.max(250, Math.round(activeScenario.nB * scale))
+    chartDomainMax = Math.max(metricA, metricB) * 1.35 || 1
+    sliderDisplay = `${Math.round(scale * 100)}%`
+    sliderNote = 'Scale respondent or traffic volume to see how precision changes.'
+  } else if (activeScenario.kind === 'mean') {
+    const scale = evidenceScale / 100
+    const nA = Math.max(250, Math.round(activeScenario.nA * scale))
+    const nB = Math.max(250, Math.round(activeScenario.nB * scale))
     metricA = activeScenario.meanA
     metricB = activeScenario.meanB
     diff = metricB - metricA
     standardError = Math.sqrt((activeScenario.sdA ** 2) / nA + (activeScenario.sdB ** 2) / nB)
     testStandardError = standardError
+    relativeLift = metricA === 0 ? 0 : diff / metricA
+    incrementalImpact = diff * activeScenario.rolloutVolume
     hypothesisText = `H₀: μ${activeScenario.variantLabel} = μ${activeScenario.controlLabel} vs. H₁: μ${activeScenario.variantLabel} ≠ μ${activeScenario.controlLabel}`
+    chartDomainMax = Math.max(metricA, metricB) * 1.35 || 1
+    sliderDisplay = `${Math.round(scale * 100)}%`
+    sliderNote = 'Scale eligible session volume to see how much variance changes precision.'
+  } else {
+    const maxPairs = activeScenario.preControl.length
+    pairCount = Math.max(6, Math.min(maxPairs, Math.round((maxPairs * evidenceScale) / 100)))
+    const preControl = activeScenario.preControl.slice(0, pairCount)
+    const postControl = activeScenario.postControl.slice(0, pairCount)
+    const preTreatment = activeScenario.preTreatment.slice(0, pairCount)
+    const postTreatment = activeScenario.postTreatment.slice(0, pairCount)
+
+    geoPreControl = mean(preControl)
+    geoPostControl = mean(postControl)
+    geoPreTreatment = mean(preTreatment)
+    geoPostTreatment = mean(postTreatment)
+
+    metricA = geoPostControl
+    metricB = geoPostTreatment
+    const controlChanges = postControl.map((value, index) => value - preControl[index])
+    const treatmentChanges = postTreatment.map((value, index) => value - preTreatment[index])
+    const controlMeanChange = mean(controlChanges)
+    const treatmentMeanChange = mean(treatmentChanges)
+    diff = treatmentMeanChange - controlMeanChange
+    standardError = Math.sqrt((stdDev(controlChanges) ** 2) / pairCount + (stdDev(treatmentChanges) ** 2) / pairCount)
+    testStandardError = standardError
+    const counterfactualPost = geoPreTreatment + controlMeanChange
+    relativeLift = counterfactualPost === 0 ? 0 : diff / counterfactualPost
+    incrementalImpact = diff * activeScenario.rolloutMultiplier
+    hypothesisText = `H₀: Δ${activeScenario.variantLabel} = Δ${activeScenario.controlLabel} vs. H₁: Δ${activeScenario.variantLabel} ≠ Δ${activeScenario.controlLabel}`
+    chartDomainMax = Math.max(geoPreControl, geoPostControl, geoPreTreatment, geoPostTreatment) * 1.25 || 1
+    sliderDisplay = `${pairCount} pairs`
+    sliderNote = 'Use more or fewer matched geo pairs to see how market count changes precision.'
   }
 
   const zScore = testStandardError === 0 ? 0 : diff / testStandardError
   const pValue = 2 * (1 - normalCdf(Math.abs(zScore)))
   const ciLow = diff - zCritical * standardError
   const ciHigh = diff + zCritical * standardError
-  const relativeLift = metricA === 0 ? 0 : diff / metricA
   const observedEffect = testStandardError === 0 ? 0 : diff / testStandardError
   const alphaCutoff = confidenceLookup[1 - alpha]
-  const power =
-    (1 - normalCdf(alphaCutoff - observedEffect)) + normalCdf(-alphaCutoff - observedEffect)
-  const incrementalImpact = diff * activeScenario.rolloutVolume
+  const power = (1 - normalCdf(alphaCutoff - observedEffect)) + normalCdf(-alphaCutoff - observedEffect)
   const significant = pValue < alpha
 
-  const barDomainMax = Math.max(metricA, metricB) * 1.3 || 1
-  const barHeight = (value: number) => (value / barDomainMax) * 150
-
+  const barHeight = (value: number) => (value / chartDomainMax) * 150
   const ciDomainLeft = Math.min(ciLow, 0, diff) - Math.abs(diff || 1) * 0.7 - standardError * 2
   const ciDomainRight = Math.max(ciHigh, 0, diff) + Math.abs(diff || 1) * 0.7 + standardError * 2
-  const ciScale = (value: number) => 70 + ((value - ciDomainLeft) / (ciDomainRight - ciDomainLeft)) * 480
+  const ciScale = (value: number) => 70 + ((value - ciDomainLeft) / (ciDomainRight - ciDomainLeft || 1)) * 480
 
   const zDomainLeft = -4
   const zDomainRight = 4
@@ -257,36 +403,36 @@ export function AdvertisingExperimentsStudio() {
 
   const actionText =
     ciLow > 0
-      ? 'The variant is credibly better than control at the chosen alpha level. A rollout is defensible if the operational tradeoffs also check out.'
+      ? 'The estimate is directionally strong enough to defend a rollout if the operational costs and strategic constraints also make sense.'
       : diff > 0
-        ? 'The estimate is directionally positive, but uncertainty still matters. This is evidence, not permission to ignore risk.'
-        : 'The current data do not support a positive lift. The team should not describe this as a win.'
+        ? 'The point estimate is positive, but uncertainty is still material. The right read is “promising, not settled.”'
+        : 'The current evidence does not support describing this as a positive lift.'
 
   return (
     <div className="stack-layout">
       <section className="content-card">
         <ModuleHeader
           kicker="Applied advertising"
-          title="Interpret experiments the way an ad team should"
-          description="These scenarios force the real decisions: proportions vs means, p-values vs effect sizes, confidence intervals, power, and whether a result is worth rolling out."
+          title="Experiments the way real media measurement teams run them"
+          description="This module is built around actual advertising measurement work: holdout-based conversion lift, brand lift surveys, geo-based incrementality, and high-variance value experiments."
         />
         <div className="module-grid narrow-sidebar">
           <aside className="control-card">
             <ChoiceRow
-              label="Scenario"
+              label="Project"
               options={scenarioOrder.map((key) => ({ label: experimentScenarios[key].label, value: key }))}
               value={scenario}
               onChange={setScenario}
             />
             <Slider
-              label="Sample size"
-              value={sampleScale}
+              label={activeScenario.kind === 'geo' ? 'Matched markets' : 'Evidence scale'}
+              value={evidenceScale}
               min={50}
-              max={200}
-              step={5}
-              display={`${sampleScale}%`}
-              note="Scale traffic or survey volume to see precision change."
-              onChange={(value) => setSampleScale(Math.round(value))}
+              max={activeScenario.kind === 'geo' ? 100 : 200}
+              step={activeScenario.kind === 'geo' ? 5 : 5}
+              display={sliderDisplay}
+              note={sliderNote}
+              onChange={(value) => setEvidenceScale(Math.round(value))}
             />
             <ChoiceRow
               label="Significance level α"
@@ -301,7 +447,7 @@ export function AdvertisingExperimentsStudio() {
               onChange={setConfidenceLevel}
             />
             <div className="explanation-panel">
-              <span className="panel-label">Business setup</span>
+              <span className="panel-label">Measurement brief</span>
               <p className="strong-text">{activeScenario.title}</p>
               <p>{activeScenario.description}</p>
             </div>
@@ -312,42 +458,69 @@ export function AdvertisingExperimentsStudio() {
                 </span>
               ))}
             </div>
+            <section className="content-card inset">
+              <h3>What the team ships</h3>
+              <ul className="syllabus-list">
+                {activeScenario.outputs.map((output) => (
+                  <li key={output}>{output}</li>
+                ))}
+              </ul>
+            </section>
           </aside>
 
           <div className="module-content">
             <div className="metric-strip wide">
               <MetricCard value={formatPrimaryMetric(activeScenario, metricA)} label={activeScenario.controlLabel} />
               <MetricCard value={formatPrimaryMetric(activeScenario, metricB)} label={activeScenario.variantLabel} />
-              <MetricCard value={formatEffect(activeScenario, diff)} label="absolute lift" />
+              <MetricCard value={formatEffect(activeScenario, diff)} label="estimated lift" />
               <MetricCard value={formatPct(relativeLift)} label="relative lift" />
             </div>
             <div className="metric-strip wide">
               <MetricCard value={formatPValue(pValue)} label="two-sided p-value" />
-              <MetricCard value={formatNumber(zScore, 2)} label="z statistic" />
+              <MetricCard value={formatNumber(zScore, 2)} label={activeScenario.kind === 'geo' ? 'DiD z statistic' : 'z statistic'} />
               <MetricCard value={formatPct(power)} label="approx. power" />
               <MetricCard value={significant ? 'Reject H₀' : 'Fail to reject H₀'} label="decision" />
             </div>
 
             <div className="two-up-grid">
               <section className="content-card inset">
-                <h3>Observed performance</h3>
-                <p>The bars show the observed group summaries after scaling the traffic. The numbers move only a little, but the uncertainty around them changes a lot with sample size.</p>
+                <h3>{activeScenario.kind === 'geo' ? 'Pre/post market means' : 'Observed performance'}</h3>
+                <p>
+                  {activeScenario.kind === 'geo'
+                    ? 'The geo study is judged on change, not just level. The treated post-period must outperform what the control-market change would have predicted.'
+                    : 'The bars show the observed group summaries. The estimates can move only slightly while precision changes a lot with more evidence.'}
+                </p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Experiment results">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
                   <line x1="80" y1="225" x2="540" y2="225" stroke="rgba(19,34,71,0.12)" strokeWidth="1" />
-                  <rect x="150" y={225 - barHeight(metricA)} width="120" height={barHeight(metricA)} className="bar-rect" rx="10" />
-                  <rect x="350" y={225 - barHeight(metricB)} width="120" height={barHeight(metricB)} className="hist-bar" rx="10" />
-                  <text x="170" y="248" className="axis-label">{activeScenario.controlLabel}</text>
-                  <text x="372" y="248" className="axis-label">{activeScenario.variantLabel}</text>
-                  <text x="168" y={215 - barHeight(metricA)} className="axis-label">{formatPrimaryMetric(activeScenario, metricA)}</text>
-                  <text x="368" y={215 - barHeight(metricB)} className="axis-label">{formatPrimaryMetric(activeScenario, metricB)}</text>
-                  <text x="26" y="28" className="chart-caption">{activeScenario.kind === 'proportion' ? 'rate' : 'mean value'}</text>
+                  {activeScenario.kind === 'geo' ? (
+                    <>
+                      <rect x="95" y={225 - barHeight(geoPreControl)} width="84" height={barHeight(geoPreControl)} className="bar-rect" rx="10" />
+                      <rect x="195" y={225 - barHeight(geoPostControl)} width="84" height={barHeight(geoPostControl)} className="bar-rect" rx="10" />
+                      <rect x="345" y={225 - barHeight(geoPreTreatment)} width="84" height={barHeight(geoPreTreatment)} className="hist-bar" rx="10" />
+                      <rect x="445" y={225 - barHeight(geoPostTreatment)} width="84" height={barHeight(geoPostTreatment)} className="hist-bar" rx="10" />
+                      <text x="108" y="248" className="axis-label">ctrl pre</text>
+                      <text x="206" y="248" className="axis-label">ctrl post</text>
+                      <text x="356" y="248" className="axis-label">trt pre</text>
+                      <text x="458" y="248" className="axis-label">trt post</text>
+                    </>
+                  ) : (
+                    <>
+                      <rect x="150" y={225 - barHeight(metricA)} width="120" height={barHeight(metricA)} className="bar-rect" rx="10" />
+                      <rect x="350" y={225 - barHeight(metricB)} width="120" height={barHeight(metricB)} className="hist-bar" rx="10" />
+                      <text x="170" y="248" className="axis-label">{activeScenario.controlLabel}</text>
+                      <text x="372" y="248" className="axis-label">{activeScenario.variantLabel}</text>
+                      <text x="168" y={215 - barHeight(metricA)} className="axis-label">{formatPrimaryMetric(activeScenario, metricA)}</text>
+                      <text x="368" y={215 - barHeight(metricB)} className="axis-label">{formatPrimaryMetric(activeScenario, metricB)}</text>
+                    </>
+                  )}
+                  <text x="26" y="28" className="chart-caption">{activeScenario.kind === 'mean' ? 'mean value' : 'rate / outcome level'}</text>
                 </svg>
               </section>
 
               <section className="content-card inset">
                 <h3>Lift with confidence interval</h3>
-                <p>The point is the estimated lift. The interval is the range of effect sizes still plausible under repeated sampling at the chosen confidence level.</p>
+                <p>The point estimate is the best current lift read. The interval shows the effect sizes still plausible under repeated sampling at the chosen confidence level.</p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Confidence interval for lift">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
                   <line x1={ciScale(0)} y1="55" x2={ciScale(0)} y2="225" stroke="rgba(19,34,71,0.2)" strokeWidth="2" strokeDasharray="6 6" />
@@ -384,11 +557,10 @@ export function AdvertisingExperimentsStudio() {
                   Estimated lift = {formatEffect(activeScenario, diff)} with a {Math.round(confidenceLevel * 100)}% CI from {formatEffect(activeScenario, ciLow)} to {formatEffect(activeScenario, ciHigh)}.
                 </p>
                 <p>
-                  The p-value is {formatPValue(pValue)}, so the result is <strong>{significant ? 'statistically significant' : 'not statistically significant'}</strong> at α = {alpha}.
-                  {` ${actionText}`}
+                  The p-value is {formatPValue(pValue)}, so the result is <strong>{significant ? 'statistically significant' : 'not statistically significant'}</strong> at α = {alpha}. {actionText}
                 </p>
                 <p>
-                  If rolled out at the current scale, the estimate implies roughly {formatIncremental(activeScenario, incrementalImpact)} {activeScenario.rolloutLabel}.
+                  At the planned scale, the point estimate implies roughly {formatIncremental(activeScenario, incrementalImpact)} {activeScenario.kind === 'geo' ? activeScenario.rolloutLabel : activeScenario.rolloutLabel}.
                 </p>
               </div>
             </section>
