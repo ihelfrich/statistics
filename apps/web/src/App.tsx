@@ -16,6 +16,9 @@ import {
   RegressionStudio,
   AnovaStudio,
   BootstrapStudio,
+  AdvertisingDiagnosticsStudio,
+  AdvertisingExperimentsStudio,
+  AdvertisingRegressionStudio,
 } from './modules/index.ts'
 
 const studioMap: Record<ModuleKey, () => React.JSX.Element> = {
@@ -31,6 +34,9 @@ const studioMap: Record<ModuleKey, () => React.JSX.Element> = {
   regression: RegressionStudio,
   anova: AnovaStudio,
   bootstrap: BootstrapStudio,
+  adDiagnostics: AdvertisingDiagnosticsStudio,
+  adExperiments: AdvertisingExperimentsStudio,
+  adRegression: AdvertisingRegressionStudio,
 }
 
 const syllabus = [
@@ -46,9 +52,12 @@ const syllabus = [
   'Linear regression and diagnostics',
   'ANOVA and group comparisons',
   'Bootstrap and resampling methods',
+  'Advertising KPI diagnostics and distribution reading',
+  'Advertising A/B tests for proportions, means, lift, and p-values',
+  'Advertising spend modeling, regression, and business interpretation',
 ]
 
-const categories = ['foundations', 'inference', 'modeling'] as const
+const categories = ['foundations', 'inference', 'modeling', 'applied'] as const
 
 function App() {
   const [activeModule, setActiveModule] = useState<ModuleKey>('descriptive')
@@ -59,21 +68,22 @@ function App() {
     <div className="app-shell">
       <section className="hero-band reveal">
         <div className="hero-copy">
-          <span className="eyebrow">Undergraduate probability & statistics</span>
-          <h1>An interactive studio for learning statistics — not a static textbook.</h1>
+          <span className="eyebrow">Probability, statistics, and applied advertising analytics</span>
+          <h1>Learn the theory, then use statistics the way an advertising team actually does.</h1>
           <p className="lede">
-            Twelve interactive modules covering the full undergraduate sequence:
-            from descriptive summaries through probability, inference, regression,
-            ANOVA, and modern resampling methods.
+            Fifteen interactive modules covering the undergraduate sequence and a dedicated
+            applied advertising track: descriptive analysis, distributions, inference,
+            regression, and realistic campaign interpretation for creative tests,
+            KPI monitoring, and spend-response decisions.
           </p>
           <div className="hero-stats">
-            <MetricCard value="12" label="interactive modules" />
-            <MetricCard value="3" label="course sections" />
+            <MetricCard value="15" label="interactive modules" />
+            <MetricCard value="4" label="course sections" />
             <MetricCard value="100%" label="browser-based" />
           </div>
         </div>
         <div className="hero-syllabus reveal-delay-1">
-          <div className="panel-label">Full curriculum</div>
+          <div className="panel-label">Curriculum + applied track</div>
           <ul className="syllabus-list">
             {syllabus.map((item) => (
               <li key={item}>{item}</li>

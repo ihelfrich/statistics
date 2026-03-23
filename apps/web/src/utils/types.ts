@@ -11,12 +11,15 @@ export type ModuleKey =
   | 'regression'
   | 'anova'
   | 'bootstrap'
+  | 'adDiagnostics'
+  | 'adExperiments'
+  | 'adRegression'
 
 export type ModuleMeta = {
   title: string
   kicker: string
   description: string
-  category: 'foundations' | 'inference' | 'modeling'
+  category: 'foundations' | 'inference' | 'modeling' | 'applied'
 }
 
 export const moduleRegistry: Record<ModuleKey, ModuleMeta> = {
@@ -92,6 +95,24 @@ export const moduleRegistry: Record<ModuleKey, ModuleMeta> = {
     description: 'Build confidence intervals without distributional assumptions by resampling.',
     category: 'modeling',
   },
+  adDiagnostics: {
+    title: 'Advertising Diagnostics',
+    kicker: 'Read campaign data',
+    description: 'Daily KPI monitoring, distributions, segment comparisons, and realistic advertising reporting.',
+    category: 'applied',
+  },
+  adExperiments: {
+    title: 'Advertising Experiments',
+    kicker: 'Test creative and landing pages',
+    description: 'Interpret p-values, confidence intervals, lift, and power in realistic ad experiments.',
+    category: 'applied',
+  },
+  adRegression: {
+    title: 'Advertising Regression',
+    kicker: 'Model spend response',
+    description: 'Use simple regression to quantify spend-response relationships and avoid bad business interpretation.',
+    category: 'applied',
+  },
 }
 
 export const moduleOrder: ModuleKey[] = [
@@ -107,10 +128,14 @@ export const moduleOrder: ModuleKey[] = [
   'regression',
   'anova',
   'bootstrap',
+  'adDiagnostics',
+  'adExperiments',
+  'adRegression',
 ]
 
 export const categoryLabels: Record<ModuleMeta['category'], string> = {
   foundations: 'Foundations',
   inference: 'Inference',
   modeling: 'Modeling',
+  applied: 'Applied',
 }
