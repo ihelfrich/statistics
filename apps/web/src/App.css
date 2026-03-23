@@ -315,6 +315,29 @@
   align-items: baseline;
 }
 
+.question-context-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(225, 86, 42, 0.14);
+  background: linear-gradient(180deg, rgba(255, 246, 235, 0.92), rgba(255, 252, 247, 0.82));
+}
+
+.question-context-card strong {
+  color: var(--accent-deep);
+}
+
+.question-context-card p {
+  margin: 0;
+}
+
+.question-context-card span {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
 .assessment-options {
   display: grid;
   gap: 0.7rem;
@@ -357,6 +380,29 @@
 
 .review-card.incorrect {
   border-color: rgba(180, 63, 23, 0.2);
+}
+
+.review-kicker {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.review-meta {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.review-meta span,
+.review-decision-focus {
+  font-size: 0.83rem;
+  color: var(--ink-soft);
+}
+
+.review-decision-focus {
+  margin: 0;
 }
 
 .app-shell {
@@ -606,6 +652,21 @@
 .module-header h2 {
   margin: 0;
   font-size: 1.55rem;
+}
+
+.practice-brief-card {
+  gap: 0.75rem;
+}
+
+.practice-brief-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.practice-brief-list li {
+  color: var(--ink);
 }
 
 .chip-grid,

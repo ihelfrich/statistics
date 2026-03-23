@@ -16,6 +16,7 @@ import type {
   AssessmentScoringSummary,
 } from '../utils/assessmentTypes.ts'
 import { saveCheckpointResult, saveFormalAssessmentResult } from '../utils/progress.ts'
+import { moduleRegistry } from '../utils/types.ts'
 
 type AssessmentWorkspaceProps = {
   form: AssessmentForm
@@ -28,6 +29,33 @@ function formatCountdown(milliseconds: number) {
   const minutes = Math.floor(safe / 60000)
   const seconds = Math.floor((safe % 60000) / 1000)
   return `${minutes}:${seconds.toString().padStart(2, '0')}`
+}
+
+function formatSkillTag(skill_tag: string) {
+  return skill_tag
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+function responseLabel(item: AssessmentItem, response_value: string) {
+  if (!response_value) {
+    return 'Blank'
+  }
+
+  if (item.item_type === 'single_choice') {
+    return item.options?.find((option) => option.value === response_value)?.label ?? response_value
+  }
+
+  return response_value
+}
+
+function correctAnswerLabel(item: AssessmentItem) {
+  if (item.item_type === 'single_choice') {
+    return item.options?.find((option) => option.value === String(item.correct_answer))?.label ?? String(item.correct_answer)
+  }
+
+  return String(item.correct_answer)
 }
 
 export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspaceProps) {
@@ -66,6 +94,10 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
 
   const elapsedMs = draft ? Math.max(0, nowMs - new Date(draft.started_at).getTime()) : 0
   const remainingMs = form.duration_minutes * 60000 - elapsedMs
+  const isAdvertisingPractice =
+    mode === 'practice' &&
+    Boolean(form.module_key) &&
+    moduleRegistry[form.module_key!].pathway === 'Advertising Analytics'
 
   const initializeDraft = (started_at: string, extras?: Partial<AssessmentDraftState>): AssessmentDraftState => ({
     assessment_id: form.assessment_id,
@@ -288,7 +320,9 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
             <h3>{mode === 'practice' ? 'Start checkpoint' : 'Start timed diagnostic'}</h3>
             <p>
               {mode === 'practice'
-                ? 'Use this short set to check whether the lesson concepts are stable before you move on.'
+                ? isAdvertisingPractice
+                  ? 'Treat this set like a real measurement review: calculate carefully, pressure-test the interpretation, and avoid claiming more than the evidence supports.'
+                  : 'Use this short set to check whether the lesson concepts are stable before you move on.'
                 : 'Enter your learner ID and assessment code to begin the timed diagnostic.'}
             </p>
 
@@ -367,10 +401,19 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                 <section key={item.item_id} className="content-card inset question-card">
                   <div className="question-header">
                     <span className="panel-label">
-                      Item {index + 1} • {item.skill_tag}
+                      Item {index + 1} • {formatSkillTag(item.skill_tag)}
                     </span>
                     <span className="question-difficulty">{item.difficulty_band}</span>
                   </div>
+
+                  {item.scenario_title || item.scenario_context || item.decision_focus ? (
+                    <div className="question-context-card">
+                      {item.scenario_title ? <strong>{item.scenario_title}</strong> : null}
+                      {item.scenario_context ? <p>{item.scenario_context}</p> : null}
+                      {item.decision_focus ? <span>{item.decision_focus}</span> : null}
+                    </div>
+                  ) : null}
+
                   <p className="strong-text">{item.prompt}</p>
 
                   {item.item_type === 'single_choice' ? (
@@ -448,10 +491,15 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                   return (
                     <div key={item.item_id} className={`review-card ${result?.is_correct ? 'correct' : 'incorrect'}`}>
                       <strong>{item.prompt}</strong>
-                      <span>
-                        Your answer: {result?.response_value || 'blank'} • {result?.is_correct ? 'correct' : 'incorrect'}
-                      </span>
+                      {item.scenario_title ? <span className="review-kicker">{item.scenario_title}</span> : null}
+                      <div className="review-meta">
+                        <span>Skill: {formatSkillTag(item.skill_tag)}</span>
+                        <span>Your answer: {responseLabel(item, result?.response_value ?? '')}</span>
+                        <span>Correct answer: {correctAnswerLabel(item)}</span>
+                        <span>{result?.is_correct ? 'Correct' : 'Incorrect'}</span>
+                      </div>
                       <p>{item.rationale}</p>
+                      {item.decision_focus ? <p className="review-decision-focus">{item.decision_focus}</p> : null}
                     </div>
                   )
                 })}

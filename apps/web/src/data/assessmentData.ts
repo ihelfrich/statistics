@@ -6,6 +6,30 @@ import type {
   AssessmentItem,
 } from '../utils/assessmentTypes.ts'
 
+function hashString(value: string) {
+  let hash = 2166136261
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+function shuffleOptions(item_id: string, options: NonNullable<AssessmentItem['options']>) {
+  const shuffled = [...options]
+  let seed = hashString(item_id)
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    const swapIndex = seed % (index + 1)
+    const temp = shuffled[index]
+    shuffled[index] = shuffled[swapIndex]
+    shuffled[swapIndex] = temp
+  }
+
+  return shuffled
+}
+
 function singleChoice(
   item_id: string,
   module_key: ModuleKey,
@@ -23,7 +47,7 @@ function singleChoice(
     difficulty_band,
     item_type: 'single_choice',
     prompt,
-    options,
+    options: options ? shuffleOptions(item_id, options) : undefined,
     correct_answer,
     rationale,
     scoring: { max_points: 1 },
@@ -932,67 +956,157 @@ const moduleCheckpointItems: Record<ModuleKey, AssessmentItem[]> = {
     singleChoice(
       'checkpoint-adDiagnostics-03',
       'adDiagnostics',
-      'fatigue-tail',
+      'duplication',
       'foundation',
-      'Why should an analyst care about a weak performance tail in the 6+ frequency bucket even if the blended campaign average still looks fine?',
+      'A streaming video line has strong completion rate but adds very little incremental reach beyond the channels already in market. The best interpretation is:',
       [
-        { value: 'tail-matters', label: 'Future spend often pushes more impressions into that fatigued tail' },
-        { value: 'ignore-tail', label: 'Only the overall average matters for scaling' },
-        { value: 'causal', label: 'The bucket proves the creative caused the entire result' },
-        { value: 'median-same', label: 'The median will always equal the blended average' },
+        { value: 'copy-scale', label: 'It should automatically get more budget for every objective' },
+        { value: 'inefficient', label: 'It may still help persuasion or frequency, but it is weak evidence for a reach-expansion claim' },
+        { value: 'ignore-dup', label: 'Duplication does not matter when completion rate is high' },
+        { value: 'causal', label: 'High completion proves the channel is creating unique reach' },
       ],
-      'tail-matters',
-      'The tail matters because additional budget often increases delivery in the weaker-frequency buckets.',
+      'inefficient',
+      'A channel can be useful for persuasion or frequency while still being weak evidence for incremental reach expansion.',
     ),
     singleChoice(
       'checkpoint-adDiagnostics-04',
       'adDiagnostics',
-      'geo-readiness',
+      'fatigue-tail',
       'foundation',
-      'If treated and control geos already drift apart a lot before launch, the eventual geo lift test will usually:',
+      'Why should a measurement lead care about a weak 6+ frequency bucket even if the blended hook-rate average still looks acceptable?',
       [
-        { value: 'wider-noise', label: 'Have a wider noise floor and be harder to interpret cleanly' },
-        { value: 'automatic-causal', label: 'Become automatically causal because geos differ' },
-        { value: 'same-variance', label: 'Have the same precision no matter the pre-period fit' },
-        { value: 'mean-zero', label: 'Force the mean lift estimate to zero' },
+        { value: 'causal-proof', label: 'The weak bucket proves the exact causal loss from every extra impression' },
+        { value: 'tail-risk', label: 'More spend often pushes more delivery into that weak tail, so the blend can understate fatigue risk' },
+        { value: 'blend-only', label: 'The blended average is all that matters for scaling' },
+        { value: 'equal-buckets', label: 'High- and low-frequency buckets should be interpreted as interchangeable' },
       ],
-      'wider-noise',
-      'Poor pre-period matching raises noise and weakens the clarity of the lift read.',
+      'tail-risk',
+      'The weak tail matters because added spend often increases delivery in the least efficient frequency buckets.',
     ),
     singleChoice(
       'checkpoint-adDiagnostics-05',
       'adDiagnostics',
+      'geo-readiness',
+      'intermediate',
+      'Matched geos have an average pre-period gap near zero, but three weeks are far outside the usual range. The safest next step is to:',
+      [
+        { value: 'launch', label: 'Launch immediately because the average gap is near zero' },
+        { value: 'ignore', label: 'Ignore the outlier weeks because averages are all that matter' },
+        { value: 'investigate', label: 'Investigate those weeks before launch because they can widen the test noise floor' },
+        { value: 'declare-lift', label: 'Treat the pre-period result as proof the later test will win' },
+      ],
+      'investigate',
+      'Large pre-period outlier weeks can weaken the later lift read even when the average baseline gap looks small.',
+    ),
+    singleChoice(
+      'checkpoint-adDiagnostics-06',
+      'adDiagnostics',
       'mean-vs-median',
       'intermediate',
-      'If mean cost per incremental household is materially below the median cost, the safest interpretation is:',
+      'If mean cost per incremental household is materially below median cost per incremental household, the safest interpretation is:',
       [
-        { value: 'few-efficient', label: 'A few unusually efficient weeks may be flattering the average' },
         { value: 'stable', label: 'The flight is perfectly stable' },
-        { value: 'causal', label: 'The cheapest channel caused every gain' },
-        { value: 'always-scale', label: 'The plan is automatically safe to scale' },
+        { value: 'scale', label: 'The plan is automatically ready to scale' },
+        { value: 'few-efficient', label: 'A few unusually efficient weeks may be flattering the average' },
+        { value: 'causal', label: 'The cheapest channel caused all observed efficiency' },
       ],
       'few-efficient',
       'A mean below the median on a cost metric suggests a few especially cheap weeks are pulling the average down.',
+    ),
+    numeric(
+      'checkpoint-adDiagnostics-07',
+      'adDiagnostics',
+      'benchmark-hit-rate',
+      'foundation',
+      'A reach-efficiency project stayed under the planning cap in 7 of 12 weeks. What percent of weeks met the cap?',
+      58.3,
+      '7 / 12 = 0.583, or 58.3% of weeks.',
+      0.2,
+    ),
+    singleChoice(
+      'checkpoint-adDiagnostics-08',
+      'adDiagnostics',
+      'spread',
+      'intermediate',
+      'The IQR of the weekly matched-geo signup-rate gap widens from 0.4 percentage points to 1.1 percentage points before launch. That usually means:',
+      [
+        { value: 'same', label: 'There is no meaningful change in baseline precision' },
+        { value: 'causal', label: 'The later test will automatically show a larger causal lift' },
+        { value: 'worse', label: 'The baseline is becoming more volatile, which can weaken the later lift read' },
+        { value: 'better', label: 'The geo pairs are becoming more stable' },
+      ],
+      'worse',
+      'A larger IQR in the baseline gap indicates more volatility and usually a weaker pre-period fit.',
     ),
   ],
   adExperiments: [
     singleChoice(
       'checkpoint-adExperiments-01',
       'adExperiments',
-      'incrementality',
+      'metric-type',
       'foundation',
-      'The main purpose of a conversion lift test is to estimate:',
+      'In a user holdout conversion lift study, qualified-lead rate is usually analyzed as a difference in:',
       [
-        { value: 'incremental', label: 'Incremental conversions caused by the ads' },
-        { value: 'attributed-only', label: 'Only platform-attributed conversions after exposure' },
-        { value: 'creative-rating', label: 'Only whether the creative looked better' },
-        { value: 'variance-only', label: 'Only the variance of the platform report' },
+        { value: 'variances', label: 'Variances' },
+        { value: 'proportions', label: 'Proportions' },
+        { value: 'correlations', label: 'Correlations' },
+        { value: 'medians', label: 'Medians' },
       ],
-      'incremental',
-      'Lift testing is a causal measurement exercise, not just an attribution report.',
+      'proportions',
+      'Each user either converts or does not, so the core outcome is a proportion.',
     ),
     numeric(
       'checkpoint-adExperiments-02',
+      'adExperiments',
+      'absolute-lift',
+      'foundation',
+      'Holdout conversion rate is 1.89% and exposed conversion rate is 2.16%. What is the absolute lift in percentage points?',
+      0.27,
+      'Absolute lift is 2.16% - 1.89% = 0.27 percentage points.',
+      0.05,
+    ),
+    singleChoice(
+      'checkpoint-adExperiments-03',
+      'adExperiments',
+      'p-value',
+      'foundation',
+      'A p-value of 0.03 in a conversion lift test does NOT mean:',
+      [
+        { value: 'null-extreme', label: 'A result this extreme would be fairly unusual if true lift were zero' },
+        { value: 'variant-true', label: 'There is a 97% probability that the exposed group is truly better' },
+        { value: 'decision-input', label: 'The observed difference is not especially compatible with a zero-lift null' },
+        { value: 'evidence', label: 'The data put some strain on the no-lift model' },
+      ],
+      'variant-true',
+      'A p-value is not the posterior probability that the exposed condition is truly better.',
+    ),
+    numeric(
+      'checkpoint-adExperiments-04',
+      'adExperiments',
+      'brand-lift',
+      'foundation',
+      'A brand lift survey shows 18.3% positive recall in exposed respondents and 14.7% in controls. What is the absolute lift in percentage points?',
+      3.6,
+      'Absolute lift is 18.3% - 14.7% = 3.6 percentage points.',
+      0.05,
+    ),
+    singleChoice(
+      'checkpoint-adExperiments-05',
+      'adExperiments',
+      'confidence-interval',
+      'foundation',
+      'If a 95% confidence interval for incremental lift runs from -0.1 to +0.8 percentage points, the correct summary is:',
+      [
+        { value: 'guarantees-profit', label: 'A rollout is guaranteed to be profitable' },
+        { value: 'leans-positive', label: 'The estimate leans positive, but the data are still compatible with no true lift' },
+        { value: 'negative', label: 'The result should be treated as definitely negative' },
+        { value: 'proves-huge', label: 'The lift is automatically large in business terms' },
+      ],
+      'leans-positive',
+      'Because the interval still includes zero, the data are not yet ruling out no true lift.',
+    ),
+    numeric(
+      'checkpoint-adExperiments-06',
       'adExperiments',
       'geo-did',
       'foundation',
@@ -1001,33 +1115,8 @@ const moduleCheckpointItems: Record<ModuleKey, AssessmentItem[]> = {
       'Difference-in-differences is treated change minus control change: 16 - 5 = 11.',
       0.05,
     ),
-    numeric(
-      'checkpoint-adExperiments-03',
-      'adExperiments',
-      'brand-lift',
-      'foundation',
-      'A brand lift survey shows 18% positive recall in exposed respondents and 14% in controls. What is the absolute lift in percentage points?',
-      4,
-      'Absolute lift is 18% - 14% = 4 percentage points.',
-      0.05,
-    ),
     singleChoice(
-      'checkpoint-adExperiments-04',
-      'adExperiments',
-      'confidence-interval',
-      'foundation',
-      'If the confidence interval for a lift estimate excludes 0 on the positive side, the correct interpretation is:',
-      [
-        { value: 'supports-positive', label: 'The data support a positive lift at the matching confidence level' },
-        { value: 'proves-huge', label: 'The lift is automatically large in business terms' },
-        { value: 'guarantees-profit', label: 'A rollout is guaranteed to be profitable' },
-        { value: 'means-noise', label: 'The test result was pure noise' },
-      ],
-      'supports-positive',
-      'Excluding 0 makes the no-effect value implausible at that confidence level.',
-    ),
-    singleChoice(
-      'checkpoint-adExperiments-05',
+      'checkpoint-adExperiments-07',
       'adExperiments',
       'precision',
       'intermediate',
@@ -1040,6 +1129,21 @@ const moduleCheckpointItems: Record<ModuleKey, AssessmentItem[]> = {
       ],
       'narrow',
       'More traffic improves precision and typically narrows the interval.',
+    ),
+    singleChoice(
+      'checkpoint-adExperiments-08',
+      'adExperiments',
+      'business-impact',
+      'intermediate',
+      'A lift estimate is statistically significant, but the lower confidence bound is only barely above zero. The best way to communicate that result is:',
+      [
+        { value: 'massive-win', label: 'It is a definitive massive win and cost analysis no longer matters' },
+        { value: 'guaranteed-scale', label: 'The business should scale immediately without checking economics' },
+        { value: 'credible-modest', label: 'The lift looks credible, but the commercially plausible range may still be modest' },
+        { value: 'ignore-ci', label: 'The confidence interval can be ignored because the p-value is below alpha' },
+      ],
+      'credible-modest',
+      'Statistical credibility and economic magnitude are separate questions, so the interval still matters.',
     ),
   ],
   adRegression: [
@@ -1073,23 +1177,48 @@ const moduleCheckpointItems: Record<ModuleKey, AssessmentItem[]> = {
       'holding-fixed',
       'Adjusted coefficients are partial effects conditional on the included controls.',
     ),
-    singleChoice(
+    numeric(
       'checkpoint-adRegression-03',
+      'adRegression',
+      'adjusted-forecast',
+      'foundation',
+      'If the adjusted spend coefficient is 2.4 orders per extra $1k and spend rises by $6k while the controls stay fixed, what is the predicted order increase?',
+      14.4,
+      'Predicted change = 2.4 × 6 = 14.4 orders.',
+      0.05,
+    ),
+    singleChoice(
+      'checkpoint-adRegression-04',
       'adRegression',
       'causality',
       'foundation',
       'A high R² in an advertising regression still does not by itself prove:',
       [
-        { value: 'causality', label: 'Causality or incrementality' },
         { value: 'fit', label: 'That the model explains a lot of sample variation' },
         { value: 'prediction', label: 'That the model can produce fitted values' },
+        { value: 'causality', label: 'Causality or incrementality' },
         { value: 'association', label: 'That the predictors move with the outcome in the sample' },
       ],
       'causality',
       'Strong fit can coexist with confounding or reverse demand effects.',
     ),
     singleChoice(
-      'checkpoint-adRegression-04',
+      'checkpoint-adRegression-05',
+      'adRegression',
+      'intercept',
+      'foundation',
+      'Why should an advertising analyst be careful with the intercept in a spend-response model?',
+      [
+        { value: 'always-causal', label: 'Because the intercept is always the cleanest causal estimate in the model' },
+        { value: 'zero-regime', label: 'Because zero spend may sit outside the relevant operating regime, so the intercept may not be operationally meaningful' },
+        { value: 'same-r2', label: 'Because the intercept must always equal R²' },
+        { value: 'variance-only', label: 'Because the intercept is just the variance of the outcome' },
+      ],
+      'zero-regime',
+      'The intercept is mathematically necessary, but it may not be a meaningful planning quantity if zero spend is outside the relevant data regime.',
+    ),
+    singleChoice(
+      'checkpoint-adRegression-06',
       'adRegression',
       'residual-pattern',
       'intermediate',
@@ -1103,37 +1232,237 @@ const moduleCheckpointItems: Record<ModuleKey, AssessmentItem[]> = {
       'nonlinear',
       'Residual structure is evidence that the straight-line form may be too simple.',
     ),
-    numeric(
-      'checkpoint-adRegression-05',
+    singleChoice(
+      'checkpoint-adRegression-07',
       'adRegression',
-      'adjusted-forecast',
-      'foundation',
-      'If the adjusted spend coefficient is 2.4 orders per extra $1k and spend rises by $6k while the controls stay fixed, what is the predicted order increase?',
-      14.4,
-      'Predicted change = 2.4 × 6 = 14.4 orders.',
-      0.05,
+      'naive-vs-adjusted',
+      'intermediate',
+      'If the naive spend slope drops sharply after controlling for branded demand or promotion intensity, the safest interpretation is:',
+      [
+        { value: 'causal-proof', label: 'The adjusted model has now proven pure incrementality' },
+        { value: 'r2-zero', label: 'The model fit must now be zero' },
+        { value: 'inflated-raw', label: 'The raw slope was absorbing part of the omitted demand or promo effect' },
+        { value: 'never-control', label: 'Demand or promotion should never be used as controls' },
+      ],
+      'inflated-raw',
+      'A sharp drop usually means the raw bivariate slope was overstating the media relationship because it was mixed with a confounder.',
+    ),
+    singleChoice(
+      'checkpoint-adRegression-08',
+      'adRegression',
+      'extrapolation',
+      'intermediate',
+      'Why is forecasting far beyond the highest observed spend risky even when the fitted line looks strong inside the sample?',
+      [
+        { value: 'always-safe', label: 'It is not risky if R² is high' },
+        { value: 'same-line', label: 'The same slope is guaranteed forever' },
+        { value: 'pattern-break', label: 'Saturation, auction changes, or different media conditions can break the fitted pattern outside the observed range' },
+        { value: 'means-zero', label: 'The mean of the outcome becomes zero beyond the sample' },
+      ],
+      'pattern-break',
+      'Extrapolation goes beyond the data that anchored the fitted relationship.',
     ),
   ],
+}
+
+const assessmentItemPresentation: Partial<
+  Record<
+    string,
+    Pick<AssessmentItem, 'scenario_title' | 'scenario_context' | 'decision_focus'>
+  >
+> = {
+  'checkpoint-adDiagnostics-01': {
+    scenario_title: 'Cross-channel reach audit',
+    scenario_context:
+      'A planner is combining two upper-funnel lines and needs unique household reach before signing off on more video budget.',
+    decision_focus:
+      'Adjust for overlap before you describe extra scale as incremental reach.',
+  },
+  'checkpoint-adDiagnostics-02': {
+    scenario_title: 'Retail media mix review',
+    scenario_context:
+      'A commerce lead is blending sponsored products and DSP inventory and wants the plan-level new-to-brand expectation.',
+    decision_focus:
+      'Use weighted averages when tactic shares differ materially.',
+  },
+  'checkpoint-adDiagnostics-03': {
+    scenario_title: 'Reach duplication check',
+    scenario_context:
+      'A streaming line is posting strong completion rates, but overlap analysis says it adds little unique reach beyond channels already in market.',
+    decision_focus:
+      'Separate persuasion or quality signals from true reach expansion.',
+  },
+  'checkpoint-adDiagnostics-04': {
+    scenario_title: 'CTV frequency review',
+    scenario_context:
+      'A measurement lead is reviewing hook rate by frequency bucket before approving more spend into connected TV.',
+    decision_focus:
+      'Watch the weak tail because scaling often pushes more delivery into the least efficient buckets.',
+  },
+  'checkpoint-adDiagnostics-05': {
+    scenario_title: 'Matched-market readiness scan',
+    scenario_context:
+      'A geo test looks balanced on average, but several pre-period weeks show unusually wide control-versus-treated gaps.',
+    decision_focus:
+      'Baseline instability raises the future noise floor even when the average gap looks small.',
+  },
+  'checkpoint-adDiagnostics-06': {
+    scenario_title: 'Incremental cost distribution',
+    scenario_context:
+      'Weekly cost per incremental household varies across the flight, and the mean is noticeably lower than the median.',
+    decision_focus:
+      'Check whether a few unusually efficient weeks are flattering the overall average.',
+  },
+  'checkpoint-adDiagnostics-07': {
+    scenario_title: 'Weekly efficiency scorecard',
+    scenario_context:
+      'The planning team tracks how often the flight stays below the cost-per-incremental-household cap.',
+    decision_focus:
+      'Translate counts into benchmark hit rates instead of saying the plan worked in only vague terms.',
+  },
+  'checkpoint-adDiagnostics-08': {
+    scenario_title: 'Pre-period volatility monitor',
+    scenario_context:
+      'The spread of weekly geo gaps is widening before the test launch window.',
+    decision_focus:
+      'More baseline volatility usually means a weaker and noisier lift read later.',
+  },
+  'checkpoint-adExperiments-01': {
+    scenario_title: 'Conversion lift design review',
+    scenario_context:
+      'A performance team is reading a user-level holdout on qualified-lead rate and needs the right statistical frame before scoring the result.',
+    decision_focus:
+      'Start by matching the business metric to the correct estimator type.',
+  },
+  'checkpoint-adExperiments-02': {
+    scenario_title: 'Conversion lift readout',
+    scenario_context:
+      'A 14-day holdout compares exposed and control conversion rates for a paid social acquisition push.',
+    decision_focus:
+      'State lift in percentage points before jumping to relative or commercial storytelling.',
+  },
+  'checkpoint-adExperiments-03': {
+    scenario_title: 'P-value interpretation check',
+    scenario_context:
+      'A stakeholder is reading the experiment dashboard and wants to translate a p-value into a business conclusion.',
+    decision_focus:
+      'Do not convert p-values into posterior certainty about the winning variant.',
+  },
+  'checkpoint-adExperiments-04': {
+    scenario_title: 'Brand lift survey readout',
+    scenario_context:
+      'Survey responses from exposed and control groups are being compared for aided recall after a video campaign.',
+    decision_focus:
+      'Compute the observed lift cleanly before discussing whether it is big enough to matter.',
+  },
+  'checkpoint-adExperiments-05': {
+    scenario_title: 'Confidence interval readout',
+    scenario_context:
+      'The incrementality summary shows a positive point estimate, but the interval spans both slightly negative and positive lift.',
+    decision_focus:
+      'Use the interval to separate directional optimism from what the data have actually ruled out.',
+  },
+  'checkpoint-adExperiments-06': {
+    scenario_title: 'Geo lift estimate',
+    scenario_context:
+      'Matched markets were measured before and after a regional media increase, and both treated and control geos moved during the same period.',
+    decision_focus:
+      'Difference-in-differences removes the shared market movement before attributing the remainder to the intervention.',
+  },
+  'checkpoint-adExperiments-07': {
+    scenario_title: 'Test sizing discussion',
+    scenario_context:
+      'The team is deciding whether to add more traffic, respondents, or markets to tighten the experiment read.',
+    decision_focus:
+      'Precision usually improves when you increase the effective sample size while the effect stays similar.',
+  },
+  'checkpoint-adExperiments-08': {
+    scenario_title: 'Readout memo',
+    scenario_context:
+      'A statistically significant lift estimate has a lower bound just above zero, and finance is asking whether the campaign is now an easy scale call.',
+    decision_focus:
+      'Distinguish statistical credibility from business magnitude and unit economics.',
+  },
+  'checkpoint-adRegression-01': {
+    scenario_title: 'Spend-response rebuild',
+    scenario_context:
+      'A media analyst is modeling orders on spend, but the current spec ignores branded demand and promotion intensity.',
+    decision_focus:
+      'Missing demand drivers can leak into the spend coefficient and distort the story.',
+  },
+  'checkpoint-adRegression-02': {
+    scenario_title: 'Adjusted coefficient interpretation',
+    scenario_context:
+      'The model now includes spend, branded search demand, promo intensity, and seasonality controls.',
+    decision_focus:
+      'Interpret the spend coefficient as a conditional association, not an automatic causal effect.',
+  },
+  'checkpoint-adRegression-03': {
+    scenario_title: 'Budget change forecast',
+    scenario_context:
+      'A planner wants to use the adjusted coefficient to estimate the outcome impact of a modest spend increase within the observed data range.',
+    decision_focus:
+      'Translate slope units correctly before turning the model into a forecast.',
+  },
+  'checkpoint-adRegression-04': {
+    scenario_title: 'Fit versus incrementality',
+    scenario_context:
+      'The team is impressed by a high R-squared and is close to treating the model as proof of media causality.',
+    decision_focus:
+      'Good in-sample fit does not remove confounding or reverse-demand risk.',
+  },
+  'checkpoint-adRegression-05': {
+    scenario_title: 'Intercept sanity check',
+    scenario_context:
+      'A stakeholder wants to read the intercept as the baseline order volume at zero spend.',
+    decision_focus:
+      'Ask whether zero spend is even part of the operating regime represented in the data.',
+  },
+  'checkpoint-adRegression-06': {
+    scenario_title: 'Residual diagnostics',
+    scenario_context:
+      'Residuals still show a visible curve after fitting a straight-line spend-response model.',
+    decision_focus:
+      'Residual structure is often evidence of diminishing returns or another missing nonlinear pattern.',
+  },
+  'checkpoint-adRegression-07': {
+    scenario_title: 'Naive versus adjusted comparison',
+    scenario_context:
+      'The raw bivariate spend slope drops sharply after adding demand and promotion controls.',
+    decision_focus:
+      'A large drop is a warning that the raw slope was absorbing omitted demand effects.',
+  },
+  'checkpoint-adRegression-08': {
+    scenario_title: 'Extrapolation risk review',
+    scenario_context:
+      'The business wants to forecast performance at spend levels well above the historical sample because the fitted line looks strong in-range.',
+    decision_focus:
+      'Outside the observed range, saturation, auction shifts, and channel mix changes can break the fitted pattern.',
+  },
 }
 
 export const assessment_items = Object.fromEntries(
   Object.values(moduleCheckpointItems)
     .flat()
-    .map((item) => [item.item_id, item]),
+    .map((item) => [item.item_id, { ...item, ...(assessmentItemPresentation[item.item_id] ?? {}) }]),
 ) satisfies Record<string, AssessmentItem>
 
 export const checkpoint_forms_by_module = moduleOrder.reduce<Record<ModuleKey, AssessmentForm>>(
   (accumulator, module_key) => {
+    const itemCount = moduleCheckpointItems[module_key].length
+    const isAdvertisingModule = moduleRegistry[module_key].pathway === 'Advertising Analytics'
     accumulator[module_key] = {
       assessment_id: moduleRegistry[module_key].checkpointAssessmentId,
       form_version: '2026.1',
       title: `${moduleRegistry[module_key].title} Checkpoint`,
-      subtitle: 'Objective short-form practice',
+      subtitle: isAdvertisingModule ? 'Applied scenario checkpoint' : 'Objective short-form practice',
       mode: 'checkpoint',
       module_key,
-      duration_minutes: 12,
+      duration_minutes: Math.max(12, Math.ceil(itemCount * 2)),
       instructions:
-        'Answer each item without external help, then review the rationale to diagnose the specific skill you need to tighten.',
+        isAdvertisingModule
+          ? 'Work each item like a real measurement readout: compute the statistic, pressure-test the interpretation, and avoid overstating what the data prove.'
+          : 'Answer each item without external help, then review the rationale to diagnose the specific skill you need to tighten.',
       item_ids: moduleCheckpointItems[module_key].map((item) => item.item_id),
     }
     return accumulator
@@ -1184,26 +1513,26 @@ export const formal_assessment_forms = {
     instructions:
       'Answer in an applied decision-making frame. The goal is interpretation quality and technical accuracy, not rote memorization.',
     item_ids: [
-      'checkpoint-descriptive-04',
-      'checkpoint-confidence-04',
-      'checkpoint-testing-01',
-      'checkpoint-testing-04',
-      'checkpoint-regression-03',
-      'checkpoint-regression-05',
       'checkpoint-adDiagnostics-01',
       'checkpoint-adDiagnostics-02',
       'checkpoint-adDiagnostics-03',
       'checkpoint-adDiagnostics-04',
       'checkpoint-adDiagnostics-05',
+      'checkpoint-adDiagnostics-06',
       'checkpoint-adExperiments-01',
       'checkpoint-adExperiments-02',
       'checkpoint-adExperiments-03',
       'checkpoint-adExperiments-04',
       'checkpoint-adExperiments-05',
+      'checkpoint-adExperiments-06',
+      'checkpoint-adExperiments-07',
       'checkpoint-adRegression-01',
       'checkpoint-adRegression-02',
       'checkpoint-adRegression-03',
       'checkpoint-adRegression-04',
+      'checkpoint-adRegression-05',
+      'checkpoint-adRegression-06',
+      'checkpoint-adRegression-07',
     ],
   },
 } satisfies Record<string, AssessmentForm>

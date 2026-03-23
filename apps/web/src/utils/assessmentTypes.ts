@@ -17,6 +17,9 @@ export type AssessmentItem = {
   difficulty_band: AssessmentDifficultyBand
   item_type: AssessmentItemType
   prompt: string
+  scenario_title?: string
+  scenario_context?: string
+  decision_focus?: string
   options?: AssessmentOption[]
   correct_answer: string | number
   tolerance?: number
