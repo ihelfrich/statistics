@@ -48,15 +48,15 @@ export function AppShell() {
           <div className="sidebar-metric-grid">
             <div className="sidebar-metric">
               <strong>{progress.visited_modules.length}</strong>
-              <span>modules visited</span>
+              <span>lessons opened</span>
             </div>
             <div className="sidebar-metric">
               <strong>{Object.keys(progress.checkpoint_results).length}</strong>
-              <span>checkpoints scored</span>
+              <span>checkpoints done</span>
             </div>
             <div className="sidebar-metric">
               <strong>{Object.keys(progress.formal_results).length}</strong>
-              <span>diagnostics finished</span>
+              <span>diagnostics done</span>
             </div>
           </div>
         </section>

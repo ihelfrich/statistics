@@ -111,7 +111,7 @@
 }
 
 .sidebar-metric-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .sidebar-metric,
@@ -120,6 +120,10 @@
 }
 
 .sidebar-metric {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.8rem;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.74);
   border: 1px solid rgba(21, 35, 69, 0.08);
@@ -136,7 +140,8 @@
 .sidebar-metric strong {
   display: block;
   font-family: var(--display);
-  font-size: 1.2rem;
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
 .sidebar-metric span,
@@ -439,6 +444,7 @@
 .hero-syllabus {
   border-radius: 26px;
   padding: 1.2rem;
+  gap: 0.7rem;
 }
 
 .syllabus-list {
@@ -1418,6 +1424,12 @@
   color: #fff7ee;
 }
 
+.sidebar-link-card strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  line-height: 1.25;
+}
+
 .page-stack {
   gap: 1.25rem;
 }
@@ -1468,8 +1480,17 @@
 }
 
 .hero-syllabus {
-  align-self: end;
+  align-self: center;
   background: var(--paper);
+}
+
+.hero-syllabus .panel-label,
+.hero-syllabus p {
+  color: var(--ink-soft);
+}
+
+.hero-syllabus h3 {
+  color: var(--ink);
 }
 
 .eyebrow,
