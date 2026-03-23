@@ -40,6 +40,8 @@ jobs:
 
       - name: Build
         working-directory: apps/web
+        env:
+          VITE_ASSESSMENT_API_BASE_URL: ${{ secrets.VITE_ASSESSMENT_API_BASE_URL }}
         run: pnpm build
 
       - name: Upload artifact
