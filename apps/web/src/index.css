@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,600;700&family=Sora:wght@400;500;600;700&display=swap');
 
 :root {
   font-family: var(--sans);
@@ -6,22 +6,32 @@
   font-weight: 400;
   color: var(--ink);
   background:
-    radial-gradient(circle at top left, rgba(255, 212, 173, 0.92), transparent 26%),
-    radial-gradient(circle at top right, rgba(141, 183, 234, 0.52), transparent 28%),
-    linear-gradient(180deg, #f5efe2 0%, #f7f3ea 42%, #f0ecdf 100%);
+    radial-gradient(circle at top right, rgba(213, 82, 45, 0.18), transparent 24%),
+    linear-gradient(145deg, rgba(16, 27, 36, 0.06) 0%, transparent 34%),
+    linear-gradient(180deg, #f6efe4 0%, #ecdfcb 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --sans: 'IBM Plex Sans', 'Avenir Next', sans-serif;
-  --display: 'Fraunces', 'Iowan Old Style', serif;
-  --mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+  --sans: 'Sora', 'Avenir Next', sans-serif;
+  --display: 'Newsreader', 'Iowan Old Style', serif;
+  --mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
 
-  --ink: #172347;
-  --ink-soft: #5f6782;
-  --accent: #e1562a;
-  --accent-deep: #b43f17;
+  --page: #ecdfcb;
+  --paper: #f8f1e6;
+  --paper-strong: #fffbf5;
+  --rail: #101b24;
+  --rail-soft: #1a2c39;
+  --ink: #101e2a;
+  --ink-soft: #5a625d;
+  --line: #14232e;
+  --accent: #d5522d;
+  --accent-deep: #942f18;
+  --accent-soft: #efc169;
+  --signal: #2f7ba6;
+  --success: #2e6d4a;
+  --danger: #b54a2a;
 }
 
 * {
@@ -37,10 +47,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    linear-gradient(transparent 31px, rgba(23, 35, 71, 0.045) 32px),
-    linear-gradient(90deg, transparent 31px, rgba(23, 35, 71, 0.045) 32px),
-    radial-gradient(circle at top left, rgba(255, 247, 231, 0.88), rgba(245, 239, 226, 0.92));
-  background-size: 32px 32px, 32px 32px, auto;
+    linear-gradient(135deg, rgba(16, 27, 36, 0.05) 0%, transparent 18%),
+    radial-gradient(circle at 12% 12%, rgba(239, 193, 105, 0.24), transparent 20%),
+    linear-gradient(180deg, #f6efe4 0%, #ecdfcb 100%);
+  color: var(--ink);
 }
 
 button,
@@ -65,6 +75,7 @@ h2,
 h3 {
   font-family: var(--display);
   color: var(--ink);
+  letter-spacing: -0.03em;
 }
 
 #root {
@@ -74,7 +85,11 @@ h3 {
 
 code {
   font-family: var(--mono);
-  background: rgba(20, 32, 64, 0.06);
-  border-radius: 0.55rem;
+  background: rgba(16, 27, 36, 0.08);
+  border-radius: 0.5rem;
   padding: 0.16rem 0.35rem;
+}
+
+::selection {
+  background: rgba(213, 82, 45, 0.2);
 }

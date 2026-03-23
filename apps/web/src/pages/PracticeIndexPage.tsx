@@ -11,7 +11,7 @@ export function PracticeIndexPage() {
         <div className="module-header">
           <span className="panel-label">Practice</span>
           <h2>Checkpoint hub</h2>
-          <p>Each module now has a short objective checkpoint for local scoring, progress tracking, and skill diagnosis.</p>
+          <p>Each lesson includes a short objective checkpoint for quick scoring and targeted skill diagnosis.</p>
         </div>
       </section>
 

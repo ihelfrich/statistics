@@ -1156,11 +1156,11 @@ export const formal_assessment_forms = {
     assessment_id: 'core-statistics-diagnostic',
     form_version: '2026.1',
     title: 'Core Statistics Diagnostic',
-    subtitle: 'Recorded pilot form across the core undergraduate sequence',
+    subtitle: 'Comprehensive review across descriptive statistics, inference, and modeling',
     mode: 'diagnostic',
     duration_minutes: 35,
     instructions:
-      'Work independently. Record the best answer you can support from first principles. This pilot captures item-level responses and timing for later measurement analysis.',
+      'Work independently and choose the strongest answer you can justify from first principles.',
     item_ids: [
       'checkpoint-descriptive-02',
       'checkpoint-descriptive-04',
@@ -1188,7 +1188,7 @@ export const formal_assessment_forms = {
     assessment_id: 'advertising-analytics-diagnostic',
     form_version: '2026.1',
     title: 'Advertising Analytics Diagnostic',
-    subtitle: 'Recorded pilot form for campaign interpretation, experimentation, and modeling',
+    subtitle: 'Campaign interpretation, experimentation, and spend-response modeling',
     mode: 'diagnostic',
     duration_minutes: 35,
     instructions:
@@ -1227,23 +1227,23 @@ export const formal_assessment_catalog: AssessmentCatalogEntry[] = [
   {
     assessment_id: 'core-statistics-diagnostic',
     title: 'Core Statistics Diagnostic',
-    subtitle: 'Recorded pilot form',
+    subtitle: 'Timed diagnostic',
     mode: 'diagnostic',
     duration_minutes: 35,
     audience: 'General statistics learners',
     description:
-      'A 20-item pilot form spanning descriptive analysis, probability, inference, regression, ANOVA, and resampling.',
+      'A 20-item review spanning descriptive analysis, probability, inference, regression, ANOVA, and resampling.',
     route_path: '/assess/core-statistics-diagnostic',
   },
   {
     assessment_id: 'advertising-analytics-diagnostic',
     title: 'Advertising Analytics Diagnostic',
-    subtitle: 'Recorded pilot form',
+    subtitle: 'Timed diagnostic',
     mode: 'diagnostic',
     duration_minutes: 35,
     audience: 'Advertising and growth operators',
     description:
-      'A 20-item pilot form emphasizing campaign interpretation, lift experiments, uncertainty, and spend-response modeling.',
+      'A 20-item review emphasizing campaign interpretation, lift experiments, uncertainty, and spend-response modeling.',
     route_path: '/assess/advertising-analytics-diagnostic',
   },
 ]

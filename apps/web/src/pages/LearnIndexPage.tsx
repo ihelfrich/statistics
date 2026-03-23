@@ -8,7 +8,7 @@ export function LearnIndexPage() {
         <div className="module-header">
           <span className="panel-label">Learn</span>
           <h2>Curriculum map</h2>
-          <p>Every module now has its own route, summary layer, and linked checkpoint so the site feels like a navigable course instead of a tab pile.</p>
+          <p>Start with fundamentals, then move through inference, modeling, and applied analytics.</p>
         </div>
       </section>
 
@@ -18,8 +18,8 @@ export function LearnIndexPage() {
           <section key={category} className="content-card">
             <div className="module-header">
               <span className="panel-label">{label}</span>
-              <h2>{label} Modules</h2>
-              <p>{modules.length} routed modules in this sequence.</p>
+              <h2>{label} Lessons</h2>
+              <p>{modules.length} lessons in this sequence.</p>
             </div>
             <div className="route-card-grid">
               {modules.map((module_key) => (

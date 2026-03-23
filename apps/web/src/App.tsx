@@ -1,12 +1,12 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 import { AppShell } from './components/index.ts'
 import {
   AssessIndexPage,
   AssessmentPage,
+  GuidePage,
   HomePage,
   LearnIndexPage,
-  MeasurementPage,
   ModulePage,
   NotFoundPage,
   PracticeIndexPage,
@@ -27,7 +27,8 @@ function App() {
           <Route path="practice/:moduleKey" element={<PracticeModulePage />} />
           <Route path="assess" element={<AssessIndexPage />} />
           <Route path="assess/:assessmentId" element={<AssessmentPage />} />
-          <Route path="measurement" element={<MeasurementPage />} />
+          <Route path="guide" element={<GuidePage />} />
+          <Route path="measurement" element={<Navigate to="/guide" replace />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

@@ -93,7 +93,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
     setError('')
     setSubmissionNote('')
     if (!studentId.trim() || !testCode.trim() || !consentAccepted) {
-      setError('Enter a student ID, test code, and consent acknowledgement before starting.')
+      setError('Enter a learner ID, assessment code, and confirmation before starting.')
       return
     }
     setStatus('starting')
@@ -116,7 +116,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
       setNowMs(new Date(session.started_at).getTime())
     } catch (startError) {
       setStatus('idle')
-      setError(startError instanceof Error ? startError.message : 'Unable to start the recorded session.')
+      setError(startError instanceof Error ? startError.message : 'Unable to start this assessment.')
     }
   }
 
@@ -189,7 +189,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
     }
 
     if (!draft.session || !draft.student_id) {
-      setError('Recorded sessions require a valid session token and student ID.')
+      setError('This assessment session is no longer valid. Start again.')
       return
     }
 
@@ -227,8 +227,8 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
       clearAssessmentDraft(form.assessment_id, mode)
       setSubmissionNote(
         response.duplicate
-          ? 'This session was already recorded earlier, so the existing submission was kept.'
-          : 'Submission recorded successfully for the pilot data pipeline.',
+          ? 'This attempt was already submitted, so the saved result was kept.'
+          : 'Results saved successfully.',
       )
       setSummary({
         ...nextSummary,
@@ -250,7 +250,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
     <div className="stack-layout">
       <section className="content-card">
         <div className="module-header">
-          <span className="panel-label">{mode === 'practice' ? 'Practice checkpoint' : 'Recorded pilot form'}</span>
+          <span className="panel-label">{mode === 'practice' ? 'Checkpoint' : 'Timed diagnostic'}</span>
           <h2>{form.title}</h2>
           <p>{form.instructions}</p>
         </div>
@@ -258,7 +258,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
         <div className="metric-strip wide">
           <MetricCard value={String(items.length)} label="items" />
           <MetricCard value={`${form.duration_minutes} min`} label="recommended duration" />
-          <MetricCard value={mode === 'practice' ? 'Local only' : 'GitHub-backed'} label="result storage" />
+          <MetricCard value={mode === 'practice' ? 'Self-check' : 'Timed'} label="format" />
           <MetricCard value={summary ? `${Math.round(summary.pct_correct * 100)}%` : '--'} label="latest score" />
         </div>
 
@@ -285,22 +285,22 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
 
         {!draft && !summary ? (
           <section className="content-card inset">
-            <h3>{mode === 'practice' ? 'Start local checkpoint' : 'Start recorded session'}</h3>
+            <h3>{mode === 'practice' ? 'Start checkpoint' : 'Start timed diagnostic'}</h3>
             <p>
               {mode === 'practice'
-                ? 'This checkpoint scores locally and updates your progress on this device.'
-                : 'This form records item-level responses, timing, and scoring metadata for pilot psychometric analysis.'}
+                ? 'Use this short set to check whether the lesson concepts are stable before you move on.'
+                : 'Enter your learner ID and assessment code to begin the timed diagnostic.'}
             </p>
 
             {mode === 'recorded' ? (
               <div className="assessment-gate">
                 <label className="text-control">
-                  <span>Issued student ID</span>
-                  <input value={studentId} onChange={(event) => setStudentId(event.target.value)} placeholder="ex: STAT-204-017" />
+                  <span>Learner ID</span>
+                  <input value={studentId} onChange={(event) => setStudentId(event.target.value)} placeholder="ex: STATS-017" />
                 </label>
                 <label className="text-control">
-                  <span>Instructor test code</span>
-                  <input value={testCode} onChange={(event) => setTestCode(event.target.value)} placeholder="ex: core-spring-pilot" />
+                  <span>Assessment code</span>
+                  <input value={testCode} onChange={(event) => setTestCode(event.target.value)} placeholder="ex: spring-review-a" />
                 </label>
                 <label className="consent-row">
                   <input
@@ -309,8 +309,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                     onChange={(event) => setConsentAccepted(event.target.checked)}
                   />
                   <span>
-                    I understand this is a pilot assessment and that my pseudonymous item-level
-                    responses may be stored for measurement analysis.
+                    I understand that my results will be saved under this learner ID for course use.
                   </span>
                 </label>
                 <div className="button-stack">
@@ -320,13 +319,12 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                     onClick={() => void handleRecordedStart()}
                     disabled={!isAssessmentApiConfigured() || status === 'starting'}
                   >
-                    {status === 'starting' ? 'Starting session...' : 'Start recorded assessment'}
+                    {status === 'starting' ? 'Starting...' : 'Start diagnostic'}
                   </button>
                 </div>
                 {!isAssessmentApiConfigured() ? (
                   <p className="note-text">
-                    This build is missing <code>VITE_ASSESSMENT_API_BASE_URL</code>, so recorded
-                    submissions are disabled until the Pages frontend is pointed at the Vercel API.
+                    Timed diagnostics are temporarily unavailable in this version of the site.
                   </p>
                 ) : null}
               </div>
@@ -344,8 +342,8 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
           <div className="assessment-runner">
             <div className="assessment-toolbar">
               <div className="assessment-toolbar-block">
-                <strong>{mode === 'practice' ? 'Checkpoint in progress' : 'Recorded session live'}</strong>
-                <span>{draft.student_id ? `Student ${draft.student_id}` : 'Local practice mode'}</span>
+                <strong>{mode === 'practice' ? 'Checkpoint in progress' : 'Diagnostic in progress'}</strong>
+                <span>{draft.student_id ? `Learner ${draft.student_id}` : 'Self-check mode'}</span>
               </div>
               <div className="assessment-toolbar-block align-right">
                 <strong>{mode === 'recorded' ? formatCountdown(remainingMs) : formatCountdown(elapsedMs)}</strong>
@@ -421,7 +419,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                   ? 'Submitting...'
                   : mode === 'practice'
                     ? 'Finish checkpoint'
-                    : 'Submit recorded form'}
+                    : 'Submit diagnostic'}
               </button>
               <button type="button" className="secondary-button" onClick={restartAssessment}>
                 Reset this attempt
@@ -438,7 +436,7 @@ export function AssessmentWorkspace({ form, items, mode }: AssessmentWorkspacePr
                 <MetricCard value={`${summary.raw_score} / ${summary.max_score}`} label="raw score" />
                 <MetricCard value={`${Math.round(summary.pct_correct * 100)}%`} label="percent correct" />
                 <MetricCard value={summary.mastery_band} label="mastery band" />
-                <MetricCard value={mode === 'practice' ? 'Local completion' : 'Recorded pilot completion'} label="status" />
+                <MetricCard value={mode === 'practice' ? 'Completed' : 'Saved'} label="status" />
               </div>
             </section>
 

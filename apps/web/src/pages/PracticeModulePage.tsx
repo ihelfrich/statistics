@@ -26,7 +26,7 @@ export function PracticeModulePage() {
         <div className="module-header">
           <span className="panel-label">Module checkpoint</span>
           <h2>{moduleRegistry[moduleKey].title}</h2>
-          <p>Short objective practice tied directly to the routed module page and its core learning objectives.</p>
+          <p>Short objective practice aligned to this lesson's core skills and interpretations.</p>
         </div>
       </section>
 

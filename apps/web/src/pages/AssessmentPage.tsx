@@ -23,7 +23,7 @@ export function AssessmentPage() {
           ]}
         />
         <div className="module-header">
-          <span className="panel-label">Recorded diagnostic</span>
+          <span className="panel-label">Timed diagnostic</span>
           <h2>{form.title}</h2>
           <p>{form.subtitle}</p>
         </div>

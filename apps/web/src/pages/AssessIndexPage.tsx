@@ -7,8 +7,8 @@ export function AssessIndexPage() {
       <section className="content-card">
         <div className="module-header">
           <span className="panel-label">Assess</span>
-          <h2>Recorded pilot forms</h2>
-          <p>These diagnostics use issued student IDs and test codes so the site can capture item-level evidence without pretending this is already a validated, high-stakes instrument.</p>
+          <h2>Timed diagnostics</h2>
+          <p>Use these longer forms for broad review across the course or for applied advertising analytics.</p>
         </div>
       </section>
 

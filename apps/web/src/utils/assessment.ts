@@ -152,7 +152,7 @@ type StartRecordedSessionInput = {
 export async function startRecordedSession(input: StartRecordedSessionInput) {
   const base_url = assessmentApiBaseUrl()
   if (!base_url) {
-    throw new Error('Assessment API is not configured for this site build.')
+    throw new Error('Timed assessments are unavailable right now.')
   }
 
   const response = await fetch(`${base_url}/api/assessment-sessions/start`, {
@@ -163,7 +163,7 @@ export async function startRecordedSession(input: StartRecordedSessionInput) {
 
   const payload = await response.json()
   if (!response.ok) {
-    throw new Error(payload.error ?? 'Unable to start the recorded assessment session.')
+    throw new Error(payload.error ?? 'Unable to start this assessment.')
   }
 
   return payload as AssessmentSessionStart
@@ -172,7 +172,7 @@ export async function startRecordedSession(input: StartRecordedSessionInput) {
 export async function submitRecordedAssessment(submission: AssessmentSubmission) {
   const base_url = assessmentApiBaseUrl()
   if (!base_url) {
-    throw new Error('Assessment API is not configured for this site build.')
+    throw new Error('Timed assessments are unavailable right now.')
   }
 
   const response = await fetch(`${base_url}/api/assessment-submissions`, {
@@ -183,7 +183,7 @@ export async function submitRecordedAssessment(submission: AssessmentSubmission)
 
   const payload = await response.json()
   if (!response.ok) {
-    throw new Error(payload.error ?? 'Unable to submit the assessment.')
+    throw new Error(payload.error ?? 'Unable to submit your results.')
   }
 
   return payload as {

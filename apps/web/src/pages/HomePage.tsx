@@ -21,29 +21,29 @@ export function HomePage() {
     <div className="page-stack">
       <section className="hero-band reveal">
         <div className="hero-copy">
-          <span className="eyebrow">Navigate the course as a real learning app</span>
-          <h1>Learn, practice, assess, and measure from one routed statistics workspace.</h1>
+          <span className="eyebrow">Statistics that holds up in real decisions</span>
+          <h1>Build judgment in probability, inference, and advertising analytics.</h1>
           <p className="lede">
-            The site now uses durable routes, checkpoint practice, recorded pilot diagnostics,
-            and a measurement page that explains exactly what gets stored and what this
-            instrument does not claim.
+            Move from descriptive statistics and probability into confidence intervals,
+            hypothesis tests, regression, and realistic campaign analysis. Each lesson has a
+            companion checkpoint, and timed diagnostics are available for broader review.
           </p>
           <div className="hero-stats">
-            <MetricCard value={visited_ratio} label="modules visited" />
+            <MetricCard value={visited_ratio} label="lessons opened" />
             <MetricCard value={String(completed_checkpoints)} label="checkpoints completed" />
-            <MetricCard value={String(completed_formals)} label="recorded forms submitted" />
+            <MetricCard value={String(completed_formals)} label="diagnostics finished" />
           </div>
           <div className="button-row">
             <Link to={`/learn/${continue_module}`} className="primary-button">
               Continue learning
             </Link>
             <Link to="/assess" className="secondary-button">
-              Open assessments
+              View diagnostics
             </Link>
           </div>
         </div>
         <div className="hero-syllabus reveal-delay-1">
-          <div className="panel-label">Current focus</div>
+          <div className="panel-label">Continue here</div>
           <h3>{moduleRegistry[continue_module].title}</h3>
           <p>{moduleRegistry[continue_module].description}</p>
           <div className="tag-row">
@@ -59,9 +59,9 @@ export function HomePage() {
       <div className="two-up-grid">
         <section className="content-card">
           <div className="module-header">
-            <span className="panel-label">Workflow navigation</span>
+            <span className="panel-label">Study structure</span>
             <h2>Course pathways</h2>
-            <p>Explore by concept family, then drop into a checkpoint or diagnostic without losing your place.</p>
+            <p>Start with the fundamentals, then move into inference, modeling, and applied analytics.</p>
           </div>
           <div className="route-card-grid">
             {pathways.map((pathway) => (
@@ -75,9 +75,9 @@ export function HomePage() {
 
         <section className="content-card">
           <div className="module-header">
-            <span className="panel-label">Recorded pilot forms</span>
+            <span className="panel-label">Timed diagnostics</span>
             <h2>Assessment hub</h2>
-            <p>Use pseudonymous IDs and test codes for forms that feed the GitHub-backed pilot measurement pipeline.</p>
+            <p>Use these longer forms for a broader check of overall readiness in statistics or advertising analytics.</p>
           </div>
           <div className="route-card-grid">
             {formal_assessment_catalog.map((entry) => (

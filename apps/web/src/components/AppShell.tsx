@@ -8,7 +8,7 @@ const primaryNav = [
   { to: '/learn', label: 'Learn' },
   { to: '/practice', label: 'Practice' },
   { to: '/assess', label: 'Assess' },
-  { to: '/measurement', label: 'Measurement' },
+  { to: '/guide', label: 'Guide' },
 ]
 
 function linkClassName(isActive: boolean) {
@@ -26,10 +26,7 @@ export function AppShell() {
           <NavLink to="/" className="brand-mark">
             Statistics Studio
           </NavLink>
-          <p>
-            A routed learning app for probability, statistics, and applied advertising
-            analytics.
-          </p>
+          <p>Probability, inference, and applied advertising analytics for real decisions.</p>
         </div>
 
         <nav className="shell-nav" aria-label="Primary">
@@ -59,7 +56,7 @@ export function AppShell() {
             </div>
             <div className="sidebar-metric">
               <strong>{Object.keys(progress.formal_results).length}</strong>
-              <span>pilot forms done</span>
+              <span>diagnostics finished</span>
             </div>
           </div>
         </section>

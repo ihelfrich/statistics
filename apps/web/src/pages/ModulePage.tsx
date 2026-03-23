@@ -87,17 +87,17 @@ export function ModulePage() {
             </div>
           </div>
           <div className="content-card inset">
-            <h3>Route-aware navigation</h3>
+            <h3>Before you begin</h3>
             <p>Estimated time: {meta.estimatedMinutes} minutes</p>
             <p>
-              Prerequisites:{' '}
+              Build from:{' '}
               {meta.prerequisites.length === 0
                 ? 'None'
                 : meta.prerequisites.map((prerequisite) => moduleRegistry[prerequisite].title).join(', ')}
             </p>
             <div className="button-row">
               <Link to={`/practice/${moduleKey}`} className="primary-button">
-                Open checkpoint
+                Try the checkpoint
               </Link>
               {next ? (
                 <Link to={`/learn/${next}`} className="secondary-button">

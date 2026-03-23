@@ -6,8 +6,8 @@ export function NotFoundPage() {
       <section className="content-card">
         <div className="module-header">
           <span className="panel-label">Not found</span>
-          <h2>This route does not exist.</h2>
-          <p>Use the routed course navigation to return to the curriculum, checkpoints, or recorded assessments.</p>
+          <h2>That page is not available.</h2>
+          <p>Use the navigation to return to the lessons, checkpoints, or timed diagnostics.</p>
         </div>
         <div className="button-row">
           <Link to="/" className="primary-button">
