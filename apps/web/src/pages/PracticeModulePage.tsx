@@ -34,17 +34,17 @@ const practiceBriefs: Partial<
   adExperiments: {
     title: 'Advertising experiments brief',
     description:
-      'These items are built around the way strong ad-science teams read lift studies, brand surveys, and geo tests before recommending rollout or restraint.',
+      'These items are built around the way strong ad-science teams write experiment readouts: economic hurdles, downside cases, causal credibility, and restraint when the memo is not ready.',
     scenarioThemes: [
-      'User-level conversion lift and absolute lift readouts',
-      'Brand lift survey interpretation',
-      'Confidence intervals and p-values in campaign decisions',
-      'Geo lift estimation and test sizing',
+      'Lead-gen holdouts with CAC and payback thresholds',
+      'Brand lift surveys and the limits of what they prove',
+      'Geo tests with counterfactual and matched-market discipline',
+      'High-variance value experiments where the lower bound matters',
     ],
     analystMoves: [
-      'Frame binary outcomes as proportions and state lift in percentage points.',
-      'Use p-values and intervals as evidence summaries, not certainty machines.',
-      'Keep business magnitude separate from statistical significance.',
+      'Write the absolute lift first, then ask whether it clears the commercial hurdle.',
+      'Use p-values and intervals as evidence summaries, not certainty machines or finance memos.',
+      'Keep causal evidence, business magnitude, and validity threats separate in the recommendation.',
     ],
   },
   adRegression: {

@@ -254,18 +254,18 @@ export const moduleRegistry: Record<ModuleKey, ModuleMeta> = {
   adExperiments: {
     title: 'Advertising Experiments',
     kicker: 'Run lift studies',
-    description: 'User holdouts, brand lift surveys, matched-geo experiments, and the inferential discipline needed to talk about incrementality honestly.',
+    description: 'Holdouts, brand lift surveys, matched-geo tests, and finance-ready readouts that separate causal credibility from commercial significance.',
     category: 'applied',
     slug: 'advertising-experiments',
     pathway: 'Advertising Analytics',
     prerequisites: ['confidence', 'testing', 'adDiagnostics'],
     checkpointAssessmentId: 'checkpoint-adExperiments',
     recommendedNext: 'adRegression',
-    estimatedMinutes: 28,
+    estimatedMinutes: 32,
     learningObjectives: [
-      'Choose the right inferential frame for conversion lift, brand lift, geo lift, and value-per-session tests.',
-      'Translate p-values and confidence intervals into incremental outcomes a media team can actually plan around.',
-      'Distinguish a statistically credible result from a strategically meaningful result.',
+      'Match conversion, survey, geo, and value experiments to the right estimators and the right failure modes.',
+      'Turn lift estimates and confidence intervals into downside, base, and upside planning cases a media team can use.',
+      'Separate statistical credibility, business thresholds, and validity threats in a rollout recommendation.',
     ],
   },
   adRegression: {
