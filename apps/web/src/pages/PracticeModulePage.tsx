@@ -18,7 +18,7 @@ const practiceBriefs: Partial<
   adDiagnostics: {
     title: 'Advertising diagnostics brief',
     description:
-      'These items mirror the descriptive work that sits upstream of major media decisions: overlap checks, new-to-brand mix reads, fatigue tails, and matched-market readiness.',
+      'These items mirror the descriptive work that decides whether later media stories are even credible: overlap checks, acquisition mix, fatigue tails, and geo-test readiness.',
     scenarioThemes: [
       'Cross-channel unique reach and duplication',
       'Retail media mix and weighted new-to-brand rates',
@@ -26,9 +26,9 @@ const practiceBriefs: Partial<
       'Matched-geo baseline stability before launch',
     ],
     analystMoves: [
-      'Compute the descriptive statistic first, then decide what it does and does not justify.',
-      'Treat volatility and outliers as operational signals, not annoying exceptions.',
-      'Avoid turning descriptive diagnostics into causal claims.',
+      'Compute the diagnostic first, then decide whether the operating story is actually stable enough to trust.',
+      'Treat volatility, outliers, and tail weakness as operational signals, not annoying exceptions.',
+      'Avoid turning a descriptive screen into a causal claim or a premature green light.',
     ],
   },
   adExperiments: {
@@ -50,7 +50,7 @@ const practiceBriefs: Partial<
   adRegression: {
     title: 'Advertising modeling brief',
     description:
-      'These items focus on the modeling judgments that matter in spend-response work: controls, coefficient interpretation, residual diagnosis, and extrapolation risk.',
+      'These items focus on the modeling judgments that matter in spend-response work: controls, coefficient interpretation, residual diagnosis, extrapolation risk, and the line between planning and causality.',
     scenarioThemes: [
       'Naive versus adjusted spend-response models',
       'Branded demand and promotion confounding',
@@ -58,9 +58,9 @@ const practiceBriefs: Partial<
       'Forecast risk outside the observed spend range',
     ],
     analystMoves: [
-      'Interpret coefficients conditionally and stay skeptical about causal language.',
+      'Interpret coefficients conditionally and keep the controls explicit in the story.',
       'Use diagnostics to challenge the model form rather than defend it.',
-      'Do not treat high fit or clean forecasts as proof of incrementality.',
+      'Do not treat fit, forecasts, or a cleaned-up coefficient as proof of incrementality.',
     ],
   },
 }
