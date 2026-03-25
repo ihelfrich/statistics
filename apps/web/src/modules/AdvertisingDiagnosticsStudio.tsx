@@ -430,6 +430,28 @@ export function AdvertisingDiagnosticsStudio() {
       : verdict.tone === 'watch'
         ? 'Recommend a constrained next step with explicit caveats about volatility, mix, or tail risk.'
         : 'Recommend fixing the operating issue before treating this as clean measurement support.'
+  const targetY = timeYScale(activeScenario.targetValue)
+  const averageY = timeYScale(average)
+  const medianY = timeYScale(med)
+  const goodBandY = activeScenario.targetDirection === 'higher' ? 45 : targetY
+  const goodBandHeight = activeScenario.targetDirection === 'higher' ? Math.max(targetY - 45, 0) : Math.max(225 - targetY, 0)
+  const warningDelta = Math.max(
+    iqr * 0.22,
+    activeScenario.unit === 'pct' ? 0.004 : activeScenario.unit === 'currency' ? 0.8 : 0.06,
+  )
+  const pointTone = (value: number) => {
+    if (activeScenario.targetDirection === 'higher') {
+      if (value >= activeScenario.targetValue) return 'good'
+      if (value >= activeScenario.targetValue - warningDelta) return 'watch'
+      return 'bad'
+    }
+    if (value <= activeScenario.targetValue) return 'good'
+    if (value <= activeScenario.targetValue + warningDelta) return 'watch'
+    return 'bad'
+  }
+  const iqrLeft = histogramXScale(q1)
+  const iqrRight = histogramXScale(q3)
+  const targetX = histogramXScale(activeScenario.targetValue)
 
   return (
     <div className="stack-layout">
@@ -541,20 +563,39 @@ export function AdvertisingDiagnosticsStudio() {
                 <p>The line shows the operating rhythm of the measurement over the flight. The guardrail separates a healthy average from a healthy week-to-week operation.</p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Advertising diagnostic time series">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
-                  <line x1="72" y1="225" x2="540" y2="225" stroke="rgba(19,34,71,0.12)" strokeWidth="1" />
-                  <line x1="72" y1={timeYScale(activeScenario.targetValue)} x2="540" y2={timeYScale(activeScenario.targetValue)} className="critical-line" />
+                  <rect x="72" y={goodBandY} width="468" height={goodBandHeight} className="chart-band good" rx="18" />
+                  <line x1="72" y1="225" x2="540" y2="225" className="chart-grid-line" />
+                  <line x1="72" y1={targetY} x2="540" y2={targetY} className="critical-line" />
+                  <line x1="72" y1={averageY} x2="540" y2={averageY} className="reference-line theoretical" />
+                  <line x1="72" y1={medianY} x2="540" y2={medianY} className="reference-line empirical" />
                   <polyline points={buildPolyline(timeSeriesPoints, timeXScale, timeYScale)} className="curve-line null" />
                   {timeSeriesPoints.map((point) => (
-                    <circle key={point.x} cx={timeXScale(point.x)} cy={timeYScale(point.y)} r="4.2" fill="rgba(213,82,45,0.9)" />
+                    <circle
+                      key={point.x}
+                      cx={timeXScale(point.x)}
+                      cy={timeYScale(point.y)}
+                      r="4.4"
+                      className={`chart-point ${pointTone(point.y)}`}
+                      strokeWidth="1.6"
+                    />
                   ))}
                   <text x="24" y="28" className="chart-caption">{activeScenario.metricLabel}</text>
-                  <text x="350" y={timeYScale(activeScenario.targetValue) - 10} className="axis-label">{targetLabel}</text>
+                  <text x="350" y={targetY - 10} className="axis-label">{targetLabel}</text>
+                  <text x="482" y={averageY - 8} className="axis-label">mean</text>
+                  <text x="482" y={medianY + 14} className="axis-label">median</text>
                   {tickWeeks.map((week) => (
                     <text key={week} x={timeXScale(week) - 12} y="248" className="axis-label">
                       wk {week}
                     </text>
                   ))}
                 </svg>
+                <div className="chart-legend">
+                  <span className="legend-chip"><span className="legend-swatch good" />on guardrail</span>
+                  <span className="legend-chip"><span className="legend-swatch watch" />near threshold</span>
+                  <span className="legend-chip"><span className="legend-swatch bad" />misses threshold</span>
+                  <span className="legend-chip"><span className="legend-swatch line control" />mean line</span>
+                  <span className="legend-chip"><span className="legend-swatch line variant" />median line</span>
+                </div>
               </section>
 
               <section className="content-card inset">
@@ -562,6 +603,7 @@ export function AdvertisingDiagnosticsStudio() {
                 <p>The histogram shows whether the project is being driven by a stable core of weeks or by a few weeks that make the average look better than the operating reality.</p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Advertising diagnostic histogram">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
+                  <rect x={iqrLeft} y="52" width={Math.max(iqrRight - iqrLeft, 0)} height="168" className="chart-band watch" rx="18" />
                   {bins.map((bin, index) => {
                     const height = 158 * (bin.count / maxBinCount)
                     const x = histogramXScale(bin.low)
@@ -578,12 +620,20 @@ export function AdvertisingDiagnosticsStudio() {
                       />
                     )
                   })}
+                  <line x1={targetX} y1="40" x2={targetX} y2="220" className="critical-line" />
                   <line x1={histogramXScale(average)} y1="40" x2={histogramXScale(average)} y2="220" className="reference-line theoretical" />
                   <line x1={histogramXScale(med)} y1="40" x2={histogramXScale(med)} y2="220" className="reference-line empirical" />
+                  <text x={targetX + 6} y="66" className="axis-label">target</text>
                   <text x={histogramXScale(average) + 6} y="34" className="axis-label">mean</text>
                   <text x={histogramXScale(med) + 6} y="50" className="axis-label">median</text>
                   <text x="24" y="28" className="chart-caption">weeks</text>
                 </svg>
+                <div className="chart-legend">
+                  <span className="legend-chip"><span className="legend-swatch watch" />middle 50% of weeks</span>
+                  <span className="legend-chip"><span className="legend-swatch line guide" />target line</span>
+                  <span className="legend-chip"><span className="legend-swatch line control" />mean</span>
+                  <span className="legend-chip"><span className="legend-swatch line variant" />median</span>
+                </div>
               </section>
             </div>
 

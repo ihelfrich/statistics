@@ -516,6 +516,13 @@ export function AdvertisingExperimentsStudio() {
   const ciDomainRight =
     Math.max(ciHigh, activeScenario.breakEvenEffect, 0, diff) + Math.abs(diff || 1) * 0.7 + standardError * 2
   const ciScale = (value: number) => 70 + ((value - ciDomainLeft) / (ciDomainRight - ciDomainLeft || 1)) * 480
+  const zeroX = ciScale(0)
+  const hurdleX = ciScale(activeScenario.breakEvenEffect)
+  const ciGoodStart = Math.min(hurdleX, 550)
+  const ciGoodWidth = Math.max(550 - ciGoodStart, 0)
+  const ciWatchStart = Math.min(zeroX, hurdleX)
+  const ciWatchWidth = Math.max(Math.abs(hurdleX - zeroX), 0)
+  const ciBadWidth = Math.max(Math.min(zeroX, 550) - 70, 0)
 
   const zDomainLeft = -4
   const zDomainRight = 4
@@ -525,6 +532,14 @@ export function AdvertisingExperimentsStudio() {
   })
   const zXScale = (value: number) => 70 + ((value - zDomainLeft) / (zDomainRight - zDomainLeft)) * 500
   const zYScale = (value: number) => 232 - (value / 0.4) * 165
+  const leftCut = zXScale(-alphaCutoff)
+  const rightCut = zXScale(alphaCutoff)
+  const controlBarY = 225 - barHeight(metricA)
+  const variantBarY = 225 - barHeight(metricB)
+  const geoControlPreY = 225 - barHeight(geoPreControl)
+  const geoControlPostY = 225 - barHeight(geoPostControl)
+  const geoTreatmentPreY = 225 - barHeight(geoPreTreatment)
+  const geoTreatmentPostY = 225 - barHeight(geoPostTreatment)
 
   const intervalRead =
     ciLow > activeScenario.breakEvenEffect
@@ -679,30 +694,48 @@ export function AdvertisingExperimentsStudio() {
                 </p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Experiment results">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
-                  <line x1="80" y1="225" x2="540" y2="225" stroke="rgba(19,34,71,0.12)" strokeWidth="1" />
+                  <line x1="80" y1="225" x2="540" y2="225" className="chart-grid-line" />
+                  <line x1="80" y1="150" x2="540" y2="150" className="chart-grid-line" />
+                  <line x1="80" y1="75" x2="540" y2="75" className="chart-grid-line" />
                   {activeScenario.kind === 'geo' ? (
                     <>
-                      <rect x="95" y={225 - barHeight(geoPreControl)} width="84" height={barHeight(geoPreControl)} className="bar-rect" rx="10" />
-                      <rect x="195" y={225 - barHeight(geoPostControl)} width="84" height={barHeight(geoPostControl)} className="bar-rect" rx="10" />
-                      <rect x="345" y={225 - barHeight(geoPreTreatment)} width="84" height={barHeight(geoPreTreatment)} className="hist-bar" rx="10" />
-                      <rect x="445" y={225 - barHeight(geoPostTreatment)} width="84" height={barHeight(geoPostTreatment)} className="hist-bar" rx="10" />
+                      <line x1="137" y1={geoControlPreY} x2="237" y2={geoControlPostY} className="reference-line theoretical" />
+                      <line x1="387" y1={geoTreatmentPreY} x2="487" y2={geoTreatmentPostY} className="reference-line empirical" />
+                      <rect x="95" y={geoControlPreY} width="84" height={barHeight(geoPreControl)} className="bar-rect" rx="10" />
+                      <rect x="195" y={geoControlPostY} width="84" height={barHeight(geoPostControl)} className="bar-rect" rx="10" />
+                      <rect x="345" y={geoTreatmentPreY} width="84" height={barHeight(geoPreTreatment)} className="hist-bar" rx="10" />
+                      <rect x="445" y={geoTreatmentPostY} width="84" height={barHeight(geoPostTreatment)} className="hist-bar" rx="10" />
                       <text x="108" y="248" className="axis-label">ctrl pre</text>
                       <text x="206" y="248" className="axis-label">ctrl post</text>
                       <text x="356" y="248" className="axis-label">trt pre</text>
                       <text x="458" y="248" className="axis-label">trt post</text>
+                      <text x="368" y="54" className="axis-label">treated shift</text>
                     </>
                   ) : (
                     <>
-                      <rect x="150" y={225 - barHeight(metricA)} width="120" height={barHeight(metricA)} className="bar-rect" rx="10" />
-                      <rect x="350" y={225 - barHeight(metricB)} width="120" height={barHeight(metricB)} className="hist-bar" rx="10" />
+                      <rect x="150" y={controlBarY} width="120" height={barHeight(metricA)} className="bar-rect" rx="10" />
+                      <rect x="350" y={variantBarY} width="120" height={barHeight(metricB)} className="hist-bar" rx="10" />
+                      <line x1="270" y1={controlBarY} x2="350" y2={variantBarY} className="observed-line" />
+                      <circle cx="270" cy={controlBarY} r="5" className="chart-point control" strokeWidth="1.5" />
+                      <circle cx="350" cy={variantBarY} r="5" className="chart-point variant" strokeWidth="1.5" />
                       <text x="170" y="248" className="axis-label">{activeScenario.controlLabel}</text>
                       <text x="372" y="248" className="axis-label">{activeScenario.variantLabel}</text>
-                      <text x="168" y={215 - barHeight(metricA)} className="axis-label">{formatPrimaryMetric(activeScenario, metricA)}</text>
-                      <text x="368" y={215 - barHeight(metricB)} className="axis-label">{formatPrimaryMetric(activeScenario, metricB)}</text>
+                      <text x="168" y={controlBarY - 10} className="axis-label">{formatPrimaryMetric(activeScenario, metricA)}</text>
+                      <text x="368" y={variantBarY - 10} className="axis-label">{formatPrimaryMetric(activeScenario, metricB)}</text>
+                      <text x="287" y={Math.min(controlBarY, variantBarY) - 10} className="axis-label">lift</text>
                     </>
                   )}
                   <text x="26" y="28" className="chart-caption">{activeScenario.kind === 'mean' ? 'mean value' : 'rate / outcome level'}</text>
                 </svg>
+                <div className="chart-legend">
+                  <span className="legend-chip"><span className="legend-swatch control" />control</span>
+                  <span className="legend-chip"><span className="legend-swatch variant" />treatment</span>
+                  {activeScenario.kind === 'geo' ? (
+                    <span className="legend-chip"><span className="legend-swatch line guide" />pre/post shift</span>
+                  ) : (
+                    <span className="legend-chip"><span className="legend-swatch line guide" />observed lift gap</span>
+                  )}
+                </div>
               </section>
 
               <section className="content-card inset">
@@ -712,17 +745,25 @@ export function AdvertisingExperimentsStudio() {
                 </p>
                 <svg viewBox="0 0 620 280" className="chart-svg" role="img" aria-label="Confidence interval for lift">
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
-                  <line x1={ciScale(0)} y1="55" x2={ciScale(0)} y2="225" stroke="rgba(19,34,71,0.2)" strokeWidth="2" strokeDasharray="6 6" />
-                  <line x1={ciScale(activeScenario.breakEvenEffect)} y1="55" x2={ciScale(activeScenario.breakEvenEffect)} y2="225" className="critical-line" />
+                  <rect x="70" y="58" width={ciBadWidth} height="164" className="chart-band bad" rx="16" />
+                  <rect x={ciWatchStart} y="58" width={ciWatchWidth} height="164" className="chart-band watch" rx="16" />
+                  <rect x={ciGoodStart} y="58" width={ciGoodWidth} height="164" className="chart-band good" rx="16" />
+                  <line x1={zeroX} y1="55" x2={zeroX} y2="225" stroke="rgba(19,34,71,0.2)" strokeWidth="2" strokeDasharray="6 6" />
+                  <line x1={hurdleX} y1="55" x2={hurdleX} y2="225" className="critical-line" />
                   <line x1={ciScale(ciLow)} y1="145" x2={ciScale(ciHigh)} y2="145" className={`interval-line ${ciLow <= 0 && ciHigh >= 0 ? 'miss' : 'good'}`} />
                   <circle cx={ciScale(diff)} cy="145" r="8" className={`interval-point ${ciLow <= 0 && ciHigh >= 0 ? 'miss' : 'good'}`} />
-                  <text x={ciScale(0) + 8} y="48" className="axis-label">zero lift</text>
-                  <text x={ciScale(activeScenario.breakEvenEffect) + 8} y="64" className="axis-label">hurdle</text>
+                  <text x={zeroX + 8} y="48" className="axis-label">zero lift</text>
+                  <text x={hurdleX + 8} y="64" className="axis-label">hurdle</text>
                   <text x={ciScale(diff) + 10} y="136" className="axis-label">{formatEffect(activeScenario, diff)}</text>
                   <text x="26" y="28" className="chart-caption">lift</text>
                   <text x="70" y="240" className="axis-label">{formatEffect(activeScenario, ciDomainLeft)}</text>
                   <text x="500" y="240" className="axis-label">{formatEffect(activeScenario, ciDomainRight)}</text>
                 </svg>
+                <div className="chart-legend">
+                  <span className="legend-chip"><span className="legend-swatch bad" />negative / harms case</span>
+                  <span className="legend-chip"><span className="legend-swatch watch" />positive but below hurdle</span>
+                  <span className="legend-chip"><span className="legend-swatch good" />clears business hurdle</span>
+                </div>
               </section>
             </div>
 
@@ -733,13 +774,21 @@ export function AdvertisingExperimentsStudio() {
               </p>
               <svg viewBox="0 0 640 290" className="chart-svg" role="img" aria-label="Null distribution for experiment test">
                 <rect x="0" y="0" width="640" height="290" rx="24" className="chart-frame" />
+                <rect x="70" y="58" width={Math.max(leftCut - 70, 0)} height="174" className="chart-band bad" rx="18" />
+                <rect x={leftCut} y="58" width={Math.max(rightCut - leftCut, 0)} height="174" className="chart-band watch" rx="18" />
+                <rect x={rightCut} y="58" width={Math.max(570 - rightCut, 0)} height="174" className="chart-band bad" rx="18" />
                 <polyline points={buildPolyline(densityPoints, zXScale, zYScale)} className="curve-line null" />
-                <line x1={zXScale(-alphaCutoff)} y1="52" x2={zXScale(-alphaCutoff)} y2="232" className="critical-line" />
-                <line x1={zXScale(alphaCutoff)} y1="52" x2={zXScale(alphaCutoff)} y2="232" className="critical-line" />
+                <line x1={leftCut} y1="52" x2={leftCut} y2="232" className="critical-line" />
+                <line x1={rightCut} y1="52" x2={rightCut} y2="232" className="critical-line" />
                 <line x1={zXScale(zScore)} y1="70" x2={zXScale(zScore)} y2="232" className="observed-line" />
                 <text x="40" y="30" className="chart-caption">density</text>
                 <text x={zXScale(zScore) + 10} y="62" className="axis-label">z = {formatNumber(zScore, 2)}</text>
               </svg>
+              <div className="chart-legend">
+                <span className="legend-chip"><span className="legend-swatch watch" />fail-to-reject region</span>
+                <span className="legend-chip"><span className="legend-swatch bad" />rejection tails</span>
+                <span className="legend-chip"><span className="legend-swatch line guide" />observed statistic</span>
+              </div>
             </section>
 
             <section className="content-card inset">

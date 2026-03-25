@@ -398,6 +398,10 @@ export function AdvertisingRegressionStudio() {
   const toSvgY = (value: number) => 228 - ((value - domainYLow) / (domainYHigh - domainYLow || 1)) * 180
   const residScale = Math.max(...adjustedResiduals.map((value) => Math.abs(value)), residualSD * 1.5, 1)
   const controlCut = activeScenario.kind === 'controlled' ? meanControl : 0
+  const forecastSvgX = toSvgX(forecastX)
+  const forecastSvgY = toSvgY(predictedOutcome)
+  const residualBandTop = 140 - (residualSD / residScale) * 85
+  const residualBandBottom = 140 + (residualSD / residScale) * 85
 
   return (
     <div className="stack-layout">
@@ -570,25 +574,29 @@ export function AdvertisingRegressionStudio() {
                   <rect x="0" y="0" width="620" height="280" rx="24" className="chart-frame" />
                   {showResiduals ? (
                     <>
-                      <line x1="72" y1="140" x2="542" y2="140" stroke="rgba(19,34,71,0.2)" strokeWidth="1.5" strokeDasharray="6 6" />
+                      <rect x="72" y={residualBandTop} width="470" height={Math.max(residualBandBottom - residualBandTop, 0)} className="chart-band watch" rx="18" />
+                      <line x1="72" y1="140" x2="542" y2="140" className="chart-grid-line emphasis" />
                       {xs.map((value, index) => (
                         <circle
                           key={`${value}-${index}`}
                           cx={toSvgX(value)}
                           cy={140 - (adjustedResiduals[index] / residScale) * 85}
                           r="4.5"
-                          fill="rgba(47,123,166,0.6)"
-                          stroke="rgba(47,123,166,0.9)"
+                          className={`chart-point ${Math.abs(adjustedResiduals[index]) <= residualSD ? 'good' : 'bad'}`}
                           strokeWidth="1.5"
                         />
                       ))}
+                      <text x="474" y={residualBandTop - 8} className="axis-label">±1 residual SD</text>
                       <text x="26" y="30" className="chart-caption">residual</text>
                       <text x="490" y="245" className="axis-label">{activeScenario.xLabel}</text>
                     </>
                   ) : (
                     <>
-                      <line x1="72" y1="228" x2="542" y2="228" stroke="rgba(19,34,71,0.12)" strokeWidth="1" />
-                      <line x1="72" y1="42" x2="72" y2="228" stroke="rgba(19,34,71,0.12)" strokeWidth="1" />
+                      <line x1="72" y1="228" x2="542" y2="228" className="chart-grid-line" />
+                      <line x1="72" y1="42" x2="72" y2="228" className="chart-grid-line" />
+                      <line x1="72" y1="138" x2="542" y2="138" className="chart-grid-line" />
+                      <line x1={forecastSvgX} y1="42" x2={forecastSvgX} y2="228" className="chart-guide" />
+                      <line x1="72" y1={forecastSvgY} x2={forecastSvgX} y2={forecastSvgY} className="chart-guide" />
                       <line
                         x1={toSvgX(domainXLeft)}
                         y1={toSvgY(simpleReg.intercept + simpleReg.slope * domainXLeft)}
@@ -615,28 +623,19 @@ export function AdvertisingRegressionStudio() {
                         strokeWidth="3"
                       />
                       {xs.map((value, index) => {
-                        const fill =
-                          activeScenario.kind === 'controlled' && activeScenario.controls[index] > controlCut
-                            ? 'rgba(213,82,45,0.7)'
-                            : 'rgba(47,123,166,0.65)'
-                        const stroke =
-                          activeScenario.kind === 'controlled' && activeScenario.controls[index] > controlCut
-                            ? 'rgba(213,82,45,0.95)'
-                            : 'rgba(47,123,166,0.95)'
                         return (
                           <circle
                             key={`${value}-${index}`}
                             cx={toSvgX(value)}
                             cy={toSvgY(ys[index])}
                             r="4.5"
-                            fill={fill}
-                            stroke={stroke}
+                            className={`chart-point ${activeScenario.kind === 'controlled' && activeScenario.controls[index] > controlCut ? 'variant' : 'control'}`}
                             strokeWidth="1.5"
                           />
                         )
                       })}
-                      <circle cx={toSvgX(forecastX)} cy={toSvgY(predictedOutcome)} r="7" fill="rgba(16,30,42,0.95)" stroke="white" strokeWidth="2" />
-                      <text x={toSvgX(forecastX) + 10} y={toSvgY(predictedOutcome) - 8} className="axis-label">
+                      <circle cx={forecastSvgX} cy={forecastSvgY} r="7" className="chart-point focus" strokeWidth="2" />
+                      <text x={forecastSvgX + 10} y={forecastSvgY - 8} className="axis-label">
                         {formatYValue(activeScenario, predictedOutcome)}
                       </text>
                       <text x="24" y="28" className="chart-caption">{activeScenario.yLabel}</text>
@@ -644,6 +643,29 @@ export function AdvertisingRegressionStudio() {
                     </>
                   )}
                 </svg>
+                <div className="chart-legend">
+                  {showResiduals ? (
+                    <>
+                      <span className="legend-chip"><span className="legend-swatch watch" />within ±1 residual SD</span>
+                      <span className="legend-chip"><span className="legend-swatch bad" />large residual</span>
+                      <span className="legend-chip"><span className="legend-swatch line guide" />zero residual</span>
+                    </>
+                  ) : activeScenario.kind === 'controlled' ? (
+                    <>
+                      <span className="legend-chip"><span className="legend-swatch line variant" />naive fit</span>
+                      <span className="legend-chip"><span className="legend-swatch line control" />adjusted fit</span>
+                      <span className="legend-chip"><span className="legend-swatch control" />lower control weeks</span>
+                      <span className="legend-chip"><span className="legend-swatch variant" />higher control weeks</span>
+                      <span className="legend-chip"><span className="legend-swatch guide" />forecast point</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="legend-chip"><span className="legend-swatch line control" />fitted line</span>
+                      <span className="legend-chip"><span className="legend-swatch control" />observed weeks</span>
+                      <span className="legend-chip"><span className="legend-swatch guide" />forecast point</span>
+                    </>
+                  )}
+                </div>
               </section>
 
               <section className="content-card inset">

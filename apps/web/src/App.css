@@ -993,6 +993,128 @@
   font-size: 0.82rem;
 }
 
+.chart-grid-line {
+  stroke: rgba(20, 35, 46, 0.1);
+  stroke-width: 1;
+}
+
+.chart-grid-line.emphasis {
+  stroke: rgba(20, 35, 46, 0.18);
+  stroke-dasharray: 5 6;
+}
+
+.chart-band.good {
+  fill: rgba(46, 109, 74, 0.12);
+}
+
+.chart-band.watch {
+  fill: rgba(239, 193, 105, 0.18);
+}
+
+.chart-band.bad {
+  fill: rgba(181, 74, 42, 0.1);
+}
+
+.chart-guide {
+  stroke: rgba(16, 30, 42, 0.22);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 6;
+}
+
+.chart-point.good {
+  fill: rgba(46, 109, 74, 0.92);
+  stroke: rgba(46, 109, 74, 1);
+}
+
+.chart-point.watch {
+  fill: rgba(239, 193, 105, 0.92);
+  stroke: rgba(186, 133, 27, 0.95);
+}
+
+.chart-point.bad {
+  fill: rgba(181, 74, 42, 0.92);
+  stroke: rgba(181, 74, 42, 1);
+}
+
+.chart-point.control {
+  fill: rgba(47, 123, 166, 0.88);
+  stroke: rgba(47, 123, 166, 1);
+}
+
+.chart-point.variant {
+  fill: rgba(213, 82, 45, 0.88);
+  stroke: rgba(213, 82, 45, 1);
+}
+
+.chart-point.focus {
+  fill: rgba(16, 30, 42, 0.96);
+  stroke: #fffdf8;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.68rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(20, 35, 46, 0.14);
+  background: var(--paper-strong);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.legend-swatch {
+  width: 0.82rem;
+  height: 0.82rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(20, 35, 46, 0.16);
+  background: rgba(20, 35, 46, 0.14);
+}
+
+.legend-swatch.line {
+  width: 1.05rem;
+  height: 0.34rem;
+  border-radius: 999px;
+}
+
+.legend-swatch.good {
+  background: rgba(46, 109, 74, 0.88);
+  border-color: rgba(46, 109, 74, 0.95);
+}
+
+.legend-swatch.watch {
+  background: rgba(239, 193, 105, 0.9);
+  border-color: rgba(186, 133, 27, 0.95);
+}
+
+.legend-swatch.bad {
+  background: rgba(181, 74, 42, 0.88);
+  border-color: rgba(181, 74, 42, 0.95);
+}
+
+.legend-swatch.control {
+  background: rgba(47, 123, 166, 0.9);
+  border-color: rgba(47, 123, 166, 0.98);
+}
+
+.legend-swatch.variant {
+  background: rgba(213, 82, 45, 0.9);
+  border-color: rgba(213, 82, 45, 0.98);
+}
+
+.legend-swatch.guide {
+  background: rgba(16, 30, 42, 0.25);
+  border-color: rgba(16, 30, 42, 0.4);
+}
+
 .bar-rect,
 .hist-bar {
   fill: rgba(45, 96, 176, 0.82);
