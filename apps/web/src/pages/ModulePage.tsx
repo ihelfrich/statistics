@@ -74,43 +74,25 @@ export function ModulePage() {
           <h2>{meta.title}</h2>
           <p>{meta.description}</p>
         </div>
-
-        <div className="two-up-grid">
-          <div className="content-card inset">
-            <h3>Learning objectives</h3>
-            <div className="tag-row">
-              {meta.learningObjectives.map((objective) => (
-                <span key={objective} className="tag-pill">
-                  {objective}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="content-card inset">
-            <h3>Before you begin</h3>
-            <p>Estimated time: {meta.estimatedMinutes} minutes</p>
-            <p>
-              Build from:{' '}
-              {meta.prerequisites.length === 0
-                ? 'None'
-                : meta.prerequisites.map((prerequisite) => moduleRegistry[prerequisite].title).join(', ')}
-            </p>
-            <div className="button-row">
-              <Link to={`/practice/${moduleKey}`} className="primary-button">
-                Try the checkpoint
-              </Link>
-              {next ? (
-                <Link to={`/learn/${next}`} className="secondary-button">
-                  Next module
-                </Link>
-              ) : null}
-            </div>
-          </div>
+        <div className="button-row">
+          <Link to={`/practice/${moduleKey}`} className="primary-button">
+            Checkpoint
+          </Link>
+          {next ? (
+            <Link to={`/learn/${next}`} className="secondary-button">
+              Next: {moduleRegistry[next].title}
+            </Link>
+          ) : null}
         </div>
-
         <div className="module-route-footer">
-          {previous ? <Link to={`/learn/${previous}`}>Previous: {moduleRegistry[previous].title}</Link> : <span />}
-          {next ? <Link to={`/learn/${next}`}>Next: {moduleRegistry[next].title}</Link> : null}
+          {previous ? (
+            <Link to={`/learn/${previous}`}>← {moduleRegistry[previous].title}</Link>
+          ) : (
+            <span />
+          )}
+          {next ? (
+            <Link to={`/learn/${next}`}>{moduleRegistry[next].title} →</Link>
+          ) : null}
         </div>
       </section>
 

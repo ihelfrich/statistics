@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { formal_assessment_catalog } from '../data/assessmentData.ts'
 import { useCourseProgress } from '../utils/progress.ts'
+import { moduleOrder } from '../utils/types.ts'
 
 const primaryNav = [
   { to: '/', label: 'Home', exact: true },
@@ -18,6 +19,8 @@ function linkClassName(isActive: boolean) {
 export function AppShell() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const progress = useCourseProgress()
+  const visitedCount = progress.visited_modules.length
+  const totalCount = moduleOrder.length
 
   return (
     <div className="site-shell">
@@ -26,7 +29,6 @@ export function AppShell() {
           <NavLink to="/" className="brand-mark">
             Statistics Studio
           </NavLink>
-          <p>Probability, inference, and applied advertising analytics for real decisions.</p>
         </div>
 
         <nav className="shell-nav" aria-label="Primary">
@@ -43,26 +45,17 @@ export function AppShell() {
           ))}
         </nav>
 
-        <section className="sidebar-panel">
-          <span className="panel-label">Progress</span>
-          <div className="sidebar-metric-grid">
-            <div className="sidebar-metric">
-              <strong>{progress.visited_modules.length}</strong>
-              <span>lessons opened</span>
-            </div>
-            <div className="sidebar-metric">
-              <strong>{Object.keys(progress.checkpoint_results).length}</strong>
-              <span>checkpoints done</span>
-            </div>
-            <div className="sidebar-metric">
-              <strong>{Object.keys(progress.formal_results).length}</strong>
-              <span>diagnostics done</span>
-            </div>
-          </div>
-        </section>
+        {visitedCount > 0 && (
+          <section className="sidebar-panel">
+            <span className="panel-label">Progress</span>
+            <p style={{ fontSize: '0.86rem', marginTop: '0.3rem' }}>
+              {visitedCount} of {totalCount} modules visited
+            </p>
+          </section>
+        )}
 
         <section className="sidebar-panel">
-          <span className="panel-label">Featured Diagnostics</span>
+          <span className="panel-label">Diagnostics</span>
           <div className="sidebar-stack">
             {formal_assessment_catalog.map((entry) => (
               <NavLink
@@ -72,7 +65,7 @@ export function AppShell() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <strong>{entry.title}</strong>
-                <span>{entry.duration_minutes} minutes</span>
+                <span>{entry.duration_minutes} min</span>
               </NavLink>
             ))}
           </div>

@@ -24,7 +24,7 @@
   display: grid;
   gap: 1rem;
   padding: 1.2rem;
-  border-radius: 30px;
+  border-radius: 14px;
 }
 
 .shell-main {
@@ -76,9 +76,9 @@
 .sidebar-link-card,
 .route-card,
 .question-chip {
-  border-radius: 18px;
-  border: 1px solid rgba(21, 35, 69, 0.1);
-  background: rgba(255, 255, 255, 0.76);
+  border-radius: 8px;
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .shell-link,
@@ -96,8 +96,8 @@
 .sidebar-link-card:hover,
 .route-card:hover,
 .assessment-option:hover {
-  border-color: rgba(225, 86, 42, 0.28);
-  background: rgba(255, 243, 230, 0.9);
+  border-color: rgba(213, 82, 45, 0.3);
+  background: rgba(255, 244, 235, 0.97);
 }
 
 .shell-link.active {
@@ -124,9 +124,9 @@
   grid-template-columns: auto 1fr;
   align-items: baseline;
   gap: 0.8rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(20, 30, 50, 0.08);
 }
 
 .sidebar-metric strong,
@@ -252,7 +252,7 @@
   gap: 0.3rem;
   margin-top: 1rem;
   padding: 0.95rem 1rem;
-  border-radius: 18px;
+  border-radius: 8px;
 }
 
 .status-banner.success {
@@ -274,9 +274,9 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.95rem 1rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(20, 30, 50, 0.1);
 }
 
 .assessment-toolbar-block {
@@ -319,9 +319,9 @@
   display: grid;
   gap: 0.35rem;
   padding: 0.95rem 1rem;
-  border-radius: 18px;
-  border: 1px solid rgba(225, 86, 42, 0.14);
-  background: linear-gradient(180deg, rgba(255, 246, 235, 0.92), rgba(255, 252, 247, 0.82));
+  border-radius: 8px;
+  border: 1px solid rgba(213, 82, 45, 0.15);
+  background: rgba(255, 246, 235, 0.8);
 }
 
 .question-context-card strong {
@@ -348,12 +348,12 @@
   gap: 0.7rem;
   align-items: flex-start;
   padding: 0.85rem 0.9rem;
-  border-radius: 18px;
+  border-radius: 8px;
   cursor: pointer;
   transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease;
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
 }
 
 .assessment-option input {
@@ -369,9 +369,9 @@
   display: grid;
   gap: 0.35rem;
   padding: 0.95rem 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .review-card.correct {
@@ -416,18 +416,16 @@
 .content-card,
 .control-card,
 .hero-syllabus {
-  border: 1px solid rgba(23, 35, 71, 0.1);
-  background: rgba(255, 252, 246, 0.82);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 20px 50px rgba(19, 29, 61, 0.08);
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  background: #fffcf6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .hero-band {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) 360px;
-  gap: 1.4rem;
+  gap: 1.2rem;
   padding: 1.6rem;
-  border-radius: 30px;
+  border-radius: 12px;
 }
 
 .hero-copy h1 {
@@ -468,10 +466,10 @@
 
 .metric-card {
   min-width: 120px;
-  padding: 0.9rem 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(23, 35, 71, 0.09);
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .metric-card strong {
@@ -488,7 +486,7 @@
 }
 
 .hero-syllabus {
-  border-radius: 26px;
+  border-radius: 10px;
   padding: 1.2rem;
   gap: 0.7rem;
 }
@@ -503,8 +501,8 @@
 
 .syllabus-list li {
   padding: 0.65rem 0.85rem;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.76);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
   color: var(--ink);
   font-weight: 600;
   font-size: 0.88rem;
@@ -516,7 +514,7 @@
   display: grid;
   gap: 0.9rem;
   padding: 1rem;
-  border-radius: 28px;
+  border-radius: 12px;
 }
 
 .nav-category-label {
@@ -547,14 +545,13 @@
 .module-tab {
   text-align: left;
   padding: 0.85rem 0.95rem;
-  border-radius: 18px;
-  border: 1px solid rgba(22, 36, 72, 0.1);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 244, 234, 0.9));
+  border-radius: 8px;
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  background: rgba(255, 255, 255, 0.92);
   transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
 }
 
 .module-tab:hover,
@@ -567,9 +564,9 @@
 }
 
 .module-tab.active {
-  border-color: rgba(225, 86, 42, 0.32);
-  box-shadow: 0 12px 28px rgba(21, 34, 67, 0.11);
-  background: linear-gradient(180deg, rgba(255, 246, 235, 0.98), rgba(255, 237, 221, 0.95));
+  border-color: rgba(213, 82, 45, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 244, 235, 0.97);
 }
 
 .module-tab strong {
@@ -620,7 +617,7 @@
 
 .control-card,
 .content-card {
-  border-radius: 28px;
+  border-radius: 12px;
 }
 
 .control-card {
@@ -634,8 +631,8 @@
 }
 
 .content-card.inset {
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid rgba(22, 36, 72, 0.07);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(20, 30, 50, 0.08);
 }
 
 .module-content {
@@ -685,9 +682,9 @@
 .chip-card {
   text-align: left;
   padding: 0.95rem;
-  border-radius: 18px;
-  border: 1px solid rgba(21, 35, 69, 0.1);
-  background: rgba(255, 255, 255, 0.78);
+  border-radius: 8px;
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .law-grid {
@@ -698,9 +695,9 @@
 .law-button {
   text-align: left;
   padding: 0.85rem;
-  border-radius: 18px;
-  border: 1px solid rgba(21, 35, 69, 0.1);
-  background: rgba(255, 255, 255, 0.78);
+  border-radius: 8px;
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .law-button.active,
@@ -714,8 +711,9 @@
   gap: 0.4rem;
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.68);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(20, 30, 50, 0.08);
 }
 
 .strong-text {
@@ -749,9 +747,9 @@
   gap: 0.45rem;
   margin-top: 1rem;
   padding: 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .decision-banner,
@@ -760,9 +758,9 @@
   display: grid;
   gap: 0.45rem;
   padding: 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .decision-banner h3,
@@ -828,9 +826,9 @@
   gap: 1rem;
   align-items: center;
   padding: 0.95rem 1rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .segment-row strong {
@@ -866,9 +864,9 @@
 
 .formula-card {
   padding: 0.9rem;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(21, 35, 69, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(20, 30, 50, 0.09);
 }
 
 .formula-card code {
@@ -920,9 +918,9 @@
 }
 
 .text-control input {
-  border: 1px solid rgba(24, 38, 74, 0.14);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(20, 30, 50, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
   padding: 0.82rem 0.95rem;
   font: inherit;
   color: var(--ink);
@@ -960,10 +958,11 @@
 .primary-button,
 .secondary-button {
   border: 0;
-  border-radius: 16px;
-  padding: 0.92rem 1rem;
+  border-radius: 8px;
+  padding: 0.75rem 1.1rem;
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .primary-button {
@@ -1338,8 +1337,8 @@
 
 .probability-table th,
 .probability-table td {
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.84);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
   padding: 0.8rem 0.75rem;
   text-align: center;
 }
@@ -1443,15 +1442,100 @@
   }
 }
 
+/* Homepage */
+
+.home-header {
+  gap: 1.4rem;
+}
+
+.home-header h1 {
+  margin: 0.3rem 0 0.55rem;
+  font-size: 2rem;
+}
+
+.progress-note {
+  margin-top: 0.6rem;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+
+.curriculum-track {
+  gap: 0;
+}
+
+.track-featured {
+  border-color: rgba(213, 82, 45, 0.22);
+  background: rgba(255, 248, 242, 0.98);
+}
+
+.track-header {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1.2rem 1.2rem 1rem;
+  border-bottom: 1px solid rgba(20, 30, 50, 0.08);
+}
+
+.track-header p {
+  max-width: 72ch;
+}
+
+.track-modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 0;
+  padding: 0.65rem;
+}
+
+.module-entry {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.module-entry:hover {
+  background: rgba(255, 244, 235, 0.95);
+}
+
+.module-entry.visited .module-entry-kicker::after {
+  content: ' ·';
+  color: var(--accent);
+}
+
+.module-entry-kicker {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+  line-height: 1;
+}
+
+.module-entry strong {
+  display: block;
+  font-size: 0.88rem;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.module-entry-time {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+}
+
 /* Footer */
 
 .app-footer {
   margin-top: 1rem;
-  padding: 1.6rem;
+  padding: 1.2rem 1.6rem;
   text-align: center;
-  border-radius: 28px;
-  background: rgba(255, 252, 246, 0.6);
-  border: 1px solid rgba(23, 35, 71, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 252, 246, 0.8);
+  border: 1px solid rgba(20, 30, 50, 0.08);
 }
 
 .app-footer p {
